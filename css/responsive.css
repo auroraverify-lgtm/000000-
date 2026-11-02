@@ -1,0 +1,183 @@
+/* ============================================================================
+   Адаптивность: планшет, телефон, широкий десктоп, складные экраны.
+   ========================================================================== */
+
+/* ── Широкий десктоп: правая панель встроена ─────────────────────────────── */
+@media (min-width: 1560px) {
+  :root { --rail-w: 96px; --sidebar-w: 470px; --panel-w: 400px; }
+  .rail-btn { width: 84px; height: 60px; display: flex; flex-direction: column; gap: 3px; border-radius: 12px; }
+  .rail-btn svg { width: 22px; height: 22px; }
+  .rail-btn[data-tip]::after {
+    content: attr(data-tip); position: static; padding: 0; transform: none; opacity: 1;
+    background: transparent; border: 0; box-shadow: none; font-size: 11px; line-height: 1.1;
+    font-weight: 550; color: inherit; white-space: nowrap;
+  }
+  .rail-btn[data-tip]:hover::after { transform: none; }
+  .rail-bottom { gap: 10px; }
+}
+
+/* ── Ноутбук ─────────────────────────────────────────────────────────────── */
+@media (max-width: 1360px) {
+  :root { --sidebar-w: 320px; --panel-w: 340px; }
+  .app.with-panel .conv-head .peer .sub { max-width: 120px; }
+}
+
+/* ── Планшет: правая панель становится оверлеем ──────────────────────────── */
+@media (max-width: 1180px) {
+  .app.with-panel { grid-template-columns: var(--rail-w) var(--sidebar-w) minmax(0, 1fr); }
+  .app.with-panel .panel {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 92vw); z-index: 60;
+    box-shadow: var(--shadow-3);
+  }
+  .app.profile-fullscreen .panel { inset: 0; width: 100%; }
+}
+
+/* ── Планшет/мобильный: одна область ─────────────────────────────────────── */
+@media (max-width: 980px) {
+  :root { --rail-w: 0px; --sidebar-w: 100%; }
+  .app, .app.with-panel { grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 100vw; overflow: hidden; }
+  .rail { display: none; }
+
+  .sidebar, .conv, .panel { min-width: 0; max-width: 100%; }
+  .sidebar { border-right: 0; overflow: hidden; }
+  .app[data-view='chat'] .sidebar { display: none; }
+  .app[data-view='list'] .conv { display: none; }
+  .app[data-view='settings'] .sidebar, .app[data-view='settings'] .conv { display: none; }
+  .app[data-view='search'] .sidebar, .app[data-view='search'] .conv { display: none; }
+
+  .conv { animation: slide-in-right var(--dur-4) var(--ease-out); }
+  .app[data-view='chat'] .sidebar { animation: slide-in-left var(--dur-3) var(--ease-out); }
+  .panel { animation: slide-in-right var(--dur-4) var(--ease-out); }
+
+  /* Нижняя навигация на телефоне */
+  .mobile-nav {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    padding: 6px 6px calc(6px + var(--safe-b));
+    background: var(--bg-glass); backdrop-filter: blur(20px) saturate(150%);
+    border-top: 1px solid var(--border);
+  }
+  .mobile-nav button {
+    display: grid; gap: 3px; justify-items: center; padding: 7px 4px; border-radius: var(--r-md);
+    color: var(--text-mute); font-size: 10.5px; font-weight: 650; letter-spacing: .01em;
+    transition: color var(--dur-2), background var(--dur-2);
+  }
+  .mobile-nav button svg { width: 22px; height: 22px; }
+  .mobile-nav button.active { color: var(--accent-soft); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .mobile-nav .badge { position: absolute; transform: translate(14px, -8px); }
+  .mobile-nav .nm { position: relative; display: grid; place-items: center; }
+
+  .app[data-view='chat'] .mobile-nav { display: none; }
+  .sb-list { padding-bottom: calc(76px + var(--safe-b)); }
+  .settings-inner { padding-bottom: calc(96px + var(--safe-b)); }
+  .search-results { padding-bottom: calc(96px + var(--safe-b)); }
+}
+@media (min-width: 981px) { .mobile-nav { display: none; } }
+
+/* ── Телефон ─────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  :root { --header-h: 58px; }
+  html, body, #root { width: 100%; min-width: 0; max-width: 100%; overflow: hidden; }
+  .app { height: 100dvh; min-height: 100svh; }
+  .sb-head { padding-top: calc(var(--sp-4) + var(--safe-t)); }
+  .sb-search .input { height: 46px; }
+  .chat-item { gap: 10px; padding: 12px 10px; }
+  .sb-filters { scrollbar-width: none; }
+  .sb-filters::-webkit-scrollbar { display: none; }
+  .sb-title h1 { font-size: var(--t-lg); }
+  .conv-head { padding: var(--safe-t) 6px 0; gap: 2px; }
+  .conv-head .peer { padding: 4px 6px; gap: 10px; }
+  .conv-head .peer .title { font-size: var(--t-md); }
+  .conv-head .peer .sub { font-size: var(--t-xs); }
+  .conv-head .peer .avatar { width: 38px; height: 38px; }
+  .conv-actions .hide-sm { display: none; }
+  .thread-scroll { min-width: 0; padding: 10px 8px 8px; }
+  .thread-inner { gap: 3px; }
+  .msg-stack { max-width: min(90%, 420px); min-width: 0; }
+  .bubble { padding: 9px 12px 8px; border-radius: 18px 18px 18px 6px; font-size: var(--t-md); }
+  .msg.own .bubble { border-radius: 18px 18px 6px 18px; }
+  .msg.grouped .bubble { border-radius: 15px; }
+  .msg-meta { margin-top: 4px; }
+  .bubble, .bubble * { overflow-wrap: anywhere; word-break: break-word; }
+  .media-grid, .attachments, .gift-message { max-width: 100%; }
+  .composer-wrap { padding: 0 8px calc(8px + var(--safe-b)); }
+  .composer { min-width: 0; gap: 4px; padding: 6px; border-radius: 22px; }
+  .composer-side { gap: 0; }
+  .composer-side .icon-btn { width: 40px; height: 42px; }
+  .composer-input { min-width: 0; max-height: 132px; }
+  .composer .send-btn, .mic-btn { width: 42px; height: 42px; }
+  .scroll-down { bottom: 96px; right: 12px; }
+  .pinned-bar { margin: 0 10px; }
+  .stat-row { grid-template-columns: repeat(3, 1fr); }
+  .theme-card { grid-template-columns: repeat(3, 1fr); }
+  .settings-inner { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+  .profile-card { flex-wrap: wrap; }
+  .profile-card > .row { flex: 1 0 100%; }
+  .profile-card > .row .btn { flex: 1 1 0; }
+  .search-head { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+  .search-results { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+  .modal-footer { flex-wrap: wrap; }
+  .modal-footer .btn { flex: 1 1 auto; }
+  .toasts { bottom: calc(88px + var(--safe-b)); }
+  .fab { right: 14px; bottom: calc(78px + var(--safe-b)); }
+  .auth-row { grid-template-columns: 1fr; }
+  .day-sep { padding: var(--sp-3) 0 var(--sp-2); }
+  .selection-bar { top: auto; bottom: calc(84px + var(--safe-b)); }
+  .conv-head .peer { min-width: 0; }
+  .conv-head .peer .title, .conv-head .peer .sub { max-width: min(48vw, 220px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .settings-card, .settings-group, .commerce-section, .admin-inner { max-width: 100%; overflow: hidden; }
+  .commerce-inner, .settings-inner, .admin-inner { width: 100%; max-width: 100%; padding-left: 12px; padding-right: 12px; }
+  .gift-grid, .received-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gift-card { min-width: 0; padding: 12px; }
+  .gift-card h4, .gift-card p { overflow-wrap: anywhere; }
+  .gift-filters { margin-inline: -4px; }
+  .gift-sort-label { margin-left: 0; }
+  .received-gift-actions .btn { flex: 1 1 auto; }
+  .profile-gift-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .modal-body { max-width: 100%; overflow-x: hidden; }
+  .modal-footer .btn { min-width: 0; white-space: normal; }
+}
+
+@media (max-width: 380px) {
+  .mobile-nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
+  .mobile-nav button svg { width: 20px; height: 20px; }
+  .gift-grid, .received-grid { grid-template-columns: 1fr; }
+  .msg-stack { max-width: 90%; }
+  .conv-actions button { width: 36px; height: 36px; }
+}
+
+@media (pointer: coarse) {
+  button, .btn, input, textarea, select { touch-action: manipulation; }
+  .mobile-nav button, .icon-btn, .send-btn, .mic-btn { min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ── Кнопка «создать» (FAB на телефоне) ──────────────────────────────────── */
+.fab {
+  position: absolute; right: 18px; bottom: 18px; z-index: 12;
+  width: 56px; height: 56px; border-radius: 20px; display: grid; place-items: center;
+  background: var(--grad-brand); color: #fff;
+  box-shadow: 0 14px 34px -12px var(--accent-glow);
+  transition: transform var(--dur-2) var(--ease-spring);
+}
+.fab:hover { transform: scale(1.05) rotate(90deg); }
+.fab svg { width: 24px; height: 24px; }
+@media (min-width: 981px) { .fab { display: none; } }
+@media (max-width: 980px) { .app[data-view="chat"] .fab { display: none; } }
+
+/* ── Ландшафт телефона ───────────────────────────────────────────────────── */
+@media (max-height: 480px) and (max-width: 980px) {
+  .sb-head { padding-top: var(--sp-3); }
+  .sb-search .input { height: 40px; }
+}
+
+/* ── Печать (для отладки раскладки) ──────────────────────────────────────── */
+@media print { .rail, .sidebar, .mobile-nav, .composer-wrap { display: none; } }

@@ -1,0 +1,100 @@
+/* Aurora v4 — галочки верификации, строка «Оформление», компактное меню сообщения как в Telegram.
+   Подключать после aurora-v3.css */
+
+/* ═══ ГАЛОЧКИ ════════════════════════════════════════════════════════════ */
+.vbadge { position: relative; display: inline-grid; place-items: center; width: 19px; height: 19px; margin-left: 5px; vertical-align: -4px; cursor: pointer; border-radius: 50%; flex: 0 0 auto; animation: vb-pop .5s var(--ease-spring, cubic-bezier(.3,1.6,.5,1)) both; transition: transform .15s; -webkit-tap-highlight-color: transparent; }
+.vbadge:hover { transform: scale(1.18); }
+.vbadge:active { transform: scale(.9); }
+.vbadge svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.vbadge.lg { width: 26px; height: 26px; }
+.tg-name .vbadge, .panel-hero .vbadge { width: 24px; height: 24px; vertical-align: -3px; }
+@keyframes vb-pop { from { transform: scale(0) rotate(-40deg); opacity: 0; } }
+/* блик по значку */
+.vbadge::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.75) 50%, transparent 65%); background-size: 260% 100%; mix-blend-mode: overlay; pointer-events: none; animation: vb-shine 3.2s ease-in-out infinite; }
+@keyframes vb-shine { 0%, 50% { background-position: 160% 0; } 100% { background-position: -60% 0; } }
+/* рисуется галочка */
+.vbadge .vcheck { stroke-dasharray: 1; stroke-dashoffset: 0; animation: vb-draw 5s ease-in-out infinite; }
+@keyframes vb-draw { 0%, 70% { stroke-dashoffset: 0; } 74% { stroke-dashoffset: 1; } 86%, 100% { stroke-dashoffset: 0; } }
+/* официальная Aurora: синее свечение дышит, блик скользит, искры мерцают */
+.vbadge[data-v='official'] svg { animation: vb-glow 2.6s ease-in-out infinite; }
+@keyframes vb-glow { 0%, 100% { filter: drop-shadow(0 0 3px rgba(60,140,255,.7)); } 50% { filter: drop-shadow(0 0 9px rgba(90,200,255,.95)); } }
+.vbadge[data-v='official']::after { border-radius: 0; clip-path: polygon(50% 0, 88% 14%, 100% 50%, 88% 86%, 50% 100%, 12% 86%, 0 50%, 12% 14%); animation-duration: 2.4s; }
+.vbadge[data-v='official'] .vspark { transform-box: fill-box; transform-origin: center; animation: vb-spark 2.2s ease-in-out infinite; }
+.vbadge[data-v='official'] .vspark.s2 { animation-delay: 1.1s; }
+@keyframes vb-spark { 0%, 100% { transform: scale(.3); opacity: .2; } 50% { transform: scale(1.3); opacity: 1; } }
+/* обычная: щит, спокойное свечение, без искр */
+.vbadge[data-v='verified'] { border-radius: 0; }
+.vbadge[data-v='verified'] svg { filter: drop-shadow(0 1px 4px rgba(16,185,150,.55)); }
+.vbadge[data-v='verified']::after { border-radius: 0; clip-path: path('M9.5 1.5 16 4v5.3c0 4-2.8 7-6.5 8.3C5.8 16.3 3 13.3 3 9.3V4z'); animation-duration: 4s; }
+
+/* Эмодзи/Premium-значок рядом с именем всегда остаётся, галочка ставится перед ним */
+.pbadge, .pbadge.pemoji { display: inline-grid !important; flex: 0 0 auto; }
+.vbadge + .pbadge { margin-left: 3px; }
+
+/* ═══ КАРТОЧКА ПОЯСНЕНИЯ ═════════════════════════════════════════════════ */
+.vpop-wrap { position: fixed; inset: 0; z-index: 600; animation: fade-in .18s; }
+.vpop-wrap.out { opacity: 0; transition: opacity .18s; }
+.vpop { position: fixed; width: 300px; padding: 20px 18px 16px; border-radius: 24px; text-align: center; background: color-mix(in srgb, var(--bg-1, #17232e) 94%, transparent); -webkit-backdrop-filter: blur(26px) saturate(170%); backdrop-filter: blur(26px) saturate(170%); border: 1px solid var(--border-strong, rgba(255,255,255,.14)); box-shadow: 0 24px 70px rgba(0,0,0,.55); animation: pop-in .26s var(--ease-spring, cubic-bezier(.3,1.5,.5,1)); transform-origin: top center; }
+.vpop[data-v='official'] { box-shadow: 0 24px 70px rgba(0,0,0,.55), 0 0 0 1px rgba(70,150,255,.45), 0 0 50px -10px rgba(60,150,255,.65); }
+.vpop-ico { width: 58px; height: 58px; margin: 0 auto 10px; }
+.vpop-ico svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 6px 14px rgba(60,140,255,.55)); }
+.vpop[data-v='verified'] .vpop-ico svg { filter: drop-shadow(0 6px 14px rgba(16,185,150,.5)); }
+.vpop h3 { margin: 0 0 6px; font-size: 17px; font-weight: 750; letter-spacing: -.01em; }
+.vpop p { margin: 0 0 12px; font-size: 14px; line-height: 1.45; color: var(--text-dim); }
+.vpop-tag { display: inline-block; margin-bottom: 12px; padding: 4px 11px; border-radius: 99px; font-size: 11.5px; font-weight: 700; background: color-mix(in srgb, #18c597 18%, transparent); color: #4fe0b8; }
+.vpop[data-v='official'] .vpop-tag { background: linear-gradient(90deg, rgba(123,227,255,.2), rgba(90,77,255,.22)); color: #8fd0ff; }
+.vpop-ok { display: block; width: 100%; padding: 12px; border-radius: 14px; background: var(--surface-2); color: var(--text); font-weight: 650; font-size: 15px; }
+@media (max-width: 640px) {
+  .vpop-wrap { background: rgba(0,0,0,.45); }
+  .vpop { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: 100%; border-radius: 26px 26px 0 0; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); animation: vp-up .3s cubic-bezier(.2,.9,.3,1); }
+  @keyframes vp-up { from { transform: translateY(100%); } }
+}
+
+/* ═══ Строка «Оформление» ════════════════════════════════════════════════ */
+.pt-rowwrap { margin: 10px 14px 0; }
+.pt-fab { display: none !important; }
+.admin-verified-toggle { display: inline-flex; align-items: center; gap: 7px; color: var(--text-dim); font-size: 13px; white-space: nowrap; }
+.admin-verified-toggle input { width: 18px; height: 18px; margin: 0; accent-color: #18c597; cursor: pointer; }
+.admin-verified-toggle input:disabled { cursor: progress; opacity: .65; }
+
+/* ═══ МЕНЮ СООБЩЕНИЯ НА ТЕЛЕФОНЕ — компактно, как в Telegram ═════════════ */
+@media (max-width: 640px), (pointer: coarse) and (max-width: 900px) {
+  .menu { min-width: 0; width: min(250px, calc(100vw - 24px)); padding: 0; overflow: hidden; border-radius: 16px; background: color-mix(in srgb, var(--bg-1) 86%, transparent); -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%); box-shadow: 0 12px 40px rgba(0,0,0,.45); }
+  /* реакции — одна строка, листается вбок */
+  .menu .menu-reactions, .menu .menu-reactions.prem-row { display: flex; flex-wrap: nowrap; gap: 0; margin: 0; padding: 6px 6px; overflow-x: auto; scrollbar-width: none; border: 0; border-bottom: .5px solid var(--border); border-radius: 0; background: none; justify-content: flex-start; }
+  .menu .menu-reactions::-webkit-scrollbar { display: none; }
+  .menu .menu-reactions .reaction-pick { flex: 0 0 38px; width: 38px; height: 38px; aspect-ratio: auto; border-radius: 12px; font-size: 23px; }
+  .menu .menu-reactions .premium-emoji { width: 26px; height: 26px; }
+  .menu .prem-row-label { display: none; }
+  /* пункты — плотные строки */
+  .menu button:not(.reaction-pick), .menu [role='menuitem'], .menu .menu-item { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 40px; padding: 0 14px; border-radius: 0; font-size: 15px; font-weight: 500; text-align: left; }
+  .menu button:not(.reaction-pick) + button:not(.reaction-pick), .menu .menu-item + .menu-item { border-top: .5px solid var(--border); }
+  .menu button:not(.reaction-pick) svg, .menu .menu-item svg { flex: 0 0 auto; width: 19px; height: 19px; opacity: .75; }
+  .menu button:not(.reaction-pick):active, .menu .menu-item:active { background: var(--surface-2); }
+  .menu .danger, .menu [data-danger] { color: #ff5d6c; }
+  .menu hr, .menu .menu-sep { height: 6px; margin: 0; border: 0; background: color-mix(in srgb, var(--bg-0) 60%, transparent); }
+  .menu { animation: pop-in .16s var(--ease-spring); }
+
+  /* Override the older tile grid so reactions and message actions stay in compact rows. */
+  .menu.message-menu:not(.message-delete-menu) {
+    display: flex; flex-direction: column; gap: 0; width: min(280px, calc(100vw - 24px)); min-width: 0;
+    max-height: min(65dvh, 560px); padding: 0; overflow-x: hidden; overflow-y: auto; border-radius: 16px;
+  }
+  .menu.message-menu:not(.message-delete-menu) > .menu-reactions {
+    display: flex; flex: 0 0 auto; grid-column: auto; flex-wrap: nowrap; justify-content: flex-start;
+    gap: 0; margin: 0; padding: 6px; overflow-x: auto; border: 0; border-bottom: .5px solid var(--border);
+    border-radius: 0; background: none;
+  }
+  .menu.message-menu:not(.message-delete-menu) > .menu-reactions .reaction-pick {
+    flex: 0 0 38px; width: 38px; height: 38px; min-width: 38px; padding: 0; border-radius: 12px; font-size: 23px;
+  }
+  .menu.message-menu:not(.message-delete-menu) > .menu-reactions .premium-emoji { width: 26px; height: 26px; }
+  .menu.message-menu:not(.message-delete-menu) > .menu-reactions.prem-row .prem-row-label { display: none; }
+  .menu.message-menu:not(.message-delete-menu) > .menu-sep { flex: 0 0 6px; grid-column: auto; height: 6px; margin: 0; }
+  .menu.message-menu:not(.message-delete-menu) > .menu-item {
+    display: flex; flex: 0 0 auto; flex-direction: row; grid-column: auto; justify-content: flex-start;
+    gap: 12px; width: 100%; min-height: 44px; padding: 0 14px; border-radius: 0;
+    font-size: 15px; font-weight: 500; line-height: normal; text-align: left; white-space: nowrap;
+  }
+  .menu.message-menu:not(.message-delete-menu) > .menu-item svg { width: 19px; height: 19px; }
+}

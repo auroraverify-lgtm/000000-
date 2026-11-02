@@ -1,0 +1,379 @@
+/* Aurora's clean, compact chat layout. Loaded after the main theme layer. */
+
+:root {
+  --chat-surface-radius: 12px;
+}
+
+[data-theme='dark'] {
+  --bg-0: #101922;
+  --bg-1: #17232e;
+  --bg-2: #1d2b37;
+  --bg-3: #263745;
+  --bg-glass: rgba(23, 35, 46, .97);
+  --surface: rgba(255, 255, 255, .035);
+  --surface-2: rgba(255, 255, 255, .06);
+  --surface-3: rgba(255, 255, 255, .1);
+  --border: rgba(220, 235, 246, .075);
+  --border-strong: rgba(220, 235, 246, .14);
+  --text: #f3f6f8;
+  --text-dim: #aab8c4;
+  --text-mute: #8293a1;
+  --bubble-in: #1a2935;
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, .2);
+  --shadow-2: 0 8px 24px rgba(0, 0, 0, .24);
+  --shadow-3: 0 18px 48px rgba(0, 0, 0, .34);
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --bg-0: #e8eef2;
+  --bg-1: #ffffff;
+  --bg-2: #f4f7f9;
+  --bg-3: #eaf0f4;
+  --bg-glass: rgba(255, 255, 255, .97);
+  --surface: rgba(20, 42, 58, .035);
+  --surface-2: rgba(20, 42, 58, .06);
+  --surface-3: rgba(20, 42, 58, .1);
+  --border: rgba(20, 42, 58, .09);
+  --border-strong: rgba(20, 42, 58, .15);
+  --text: #17232c;
+  --text-dim: #60717e;
+  --text-mute: #8998a3;
+  --bubble-in: #ffffff;
+  --shadow-1: 0 1px 3px rgba(23, 44, 58, .08);
+  --shadow-2: 0 8px 24px rgba(23, 44, 58, .12);
+  --shadow-3: 0 18px 48px rgba(23, 44, 58, .18);
+  color-scheme: light;
+}
+
+.btn,
+.btn-sm,
+.btn-lg {
+  border-radius: 11px;
+  box-shadow: none;
+}
+
+.btn-primary,
+.badge {
+  box-shadow: none;
+}
+
+.avatar {
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.rail,
+.sidebar {
+  background: var(--bg-1);
+}
+
+.sidebar::before {
+  display: none;
+}
+
+.sb-head {
+  gap: 10px;
+  padding: calc(12px + var(--safe-t)) 14px 8px;
+}
+
+.sb-title h1 {
+  font-size: var(--t-xl);
+  font-weight: 650;
+  letter-spacing: -.015em;
+}
+
+.sb-search .input {
+  height: 42px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--surface-2);
+  box-shadow: none;
+}
+
+.sb-search .input:focus {
+  background: var(--bg-1);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.sb-filters {
+  gap: 2px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-chip {
+  position: relative;
+  flex: 0 0 auto;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-dim);
+  font-size: var(--t-sm);
+  font-weight: 550;
+}
+
+.filter-chip:hover {
+  background: transparent;
+  color: var(--text);
+}
+
+.filter-chip[aria-pressed='true'] {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--accent-soft);
+}
+
+.filter-chip[aria-pressed='true']::after {
+  position: absolute;
+  right: 9px;
+  bottom: 0;
+  left: 9px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  content: '';
+}
+
+.sb-list {
+  padding: 4px 0 12px;
+}
+
+.chat-item {
+  gap: 12px;
+  margin: 0;
+  padding: 9px 13px;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: 0;
+}
+
+.chat-item:hover {
+  background: var(--surface);
+}
+
+.chat-item:active {
+  transform: none;
+  background: var(--surface-2);
+}
+
+.chat-item.active,
+.chat-item.active:hover {
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg-1));
+}
+
+.chat-item.active .name,
+.chat-item.active .preview,
+.chat-item.active .preview .who,
+.chat-item.active .time,
+.chat-item.active .muted-ic,
+.chat-item.active .name .type-ic {
+  color: var(--text);
+}
+
+.chat-item.active .preview,
+.chat-item.active .time {
+  opacity: .78;
+}
+
+.chat-item .avatar {
+  width: 52px;
+  height: 52px;
+}
+
+.chat-item .name {
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.chat-item .preview {
+  font-size: var(--t-sm);
+}
+
+.chat-item.unread .preview {
+  color: var(--text-dim);
+}
+
+.chat-item.active .badge {
+  background: var(--accent);
+  color: #fff;
+}
+
+.conv {
+  background: var(--bg-0);
+}
+
+.conv-head {
+  background: var(--bg-1);
+  box-shadow: 0 1px 0 var(--border);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.conv-head .peer .title {
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.topic-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border);
+}
+
+.topic-select {
+  min-width: 0;
+  flex: 1;
+}
+
+.pinned-bar {
+  border-right: 0;
+  border-left: 0;
+  border-radius: 0;
+  background: var(--bg-1);
+}
+
+.thread-inner {
+  max-width: 760px;
+}
+
+.msg-stack {
+  max-width: min(500px, 84%);
+}
+
+.bubble {
+  padding: 7px 11px;
+  border: 0;
+  border-radius: 15px 15px 15px 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+  line-height: 1.42;
+}
+
+.msg.own .bubble {
+  border: 0;
+  border-radius: 15px 15px 5px 15px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+}
+
+.msg.grouped .bubble {
+  border-radius: 14px;
+}
+
+.msg.grouped:not(:last-child) .bubble {
+  border-bottom-left-radius: 14px;
+}
+
+.msg.own.grouped .bubble {
+  border-radius: 14px;
+}
+
+.msg.own.grouped:not(:last-child) .bubble {
+  border-bottom-right-radius: 14px;
+}
+
+.bubble:hover {
+  filter: none;
+}
+
+.bubble.has-media {
+  padding: 3px;
+}
+
+.day-sep span {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-1) 88%, transparent);
+  box-shadow: none;
+}
+
+.composer-wrap {
+  padding-right: 12px;
+  padding-left: 12px;
+}
+
+.composer {
+  border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .16);
+}
+
+.composer:focus-within {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.composer .send-btn {
+  box-shadow: none;
+}
+
+.menu,
+.picker,
+.fab-menu {
+  border-color: var(--border);
+  border-radius: 13px;
+  background: var(--bg-1);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.modal {
+  border-radius: 16px;
+}
+
+.mobile-nav {
+  background: var(--bg-1);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.mobile-nav button.active {
+  background: transparent;
+  color: var(--accent-soft);
+}
+
+@media (max-width: 640px) {
+  .sb-head {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .sb-filters {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .filter-chip {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .chat-item {
+    padding: 8px 11px;
+  }
+
+  .chat-item .avatar {
+    width: 52px;
+    height: 52px;
+  }
+
+  .thread-scroll {
+    padding-right: 9px;
+    padding-left: 9px;
+  }
+
+  .composer-wrap {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-item,
+  .filter-chip,
+  .btn {
+    transition-duration: 0.01ms;
+  }
+}

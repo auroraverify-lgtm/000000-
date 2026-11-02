@@ -1,0 +1,86 @@
+/* ============================================================================
+   Aurora Settings — настройки в стиле Telegram. Подключать ПОСЛЕ aurora-float.css.
+   · цветные плитки-иконки у каждого пункта
+   · главный экран = список разделов, каждый раздел открывается отдельной страницей
+   ========================================================================== */
+
+/* плитка-иконка */
+.st-ico {
+  flex: 0 0 auto; width: 32px; height: 32px; display: inline-grid; place-items: center;
+  border-radius: 10px; color: #fff;
+  background: linear-gradient(160deg, var(--c-a, #3b82f6), var(--c-b, #1d6fe0));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 4px 10px -4px var(--c-b, #1d6fe0);
+}
+.st-ico svg { width: 18px; height: 18px; }
+.st-ico.xl { width: 76px; height: 76px; border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 16px 32px -14px var(--c-b, #1d6fe0); }
+.st-ico.xl svg { width: 40px; height: 40px; }
+.st-ico[data-c='blue']   { --c-a: #4aa3ff; --c-b: #1f6fe5; }
+.st-ico[data-c='cyan']   { --c-a: #46d3f2; --c-b: #1397c9; }
+.st-ico[data-c='teal']   { --c-a: #3fd6b5; --c-b: #0f9f86; }
+.st-ico[data-c='green']  { --c-a: #5fd97a; --c-b: #23a24a; }
+.st-ico[data-c='amber']  { --c-a: #ffd25a; --c-b: #f0a30f; }
+.st-ico[data-c='orange'] { --c-a: #ffa24d; --c-b: #f06a18; }
+.st-ico[data-c='red']    { --c-a: #ff7a7a; --c-b: #e53b4b; }
+.st-ico[data-c='purple'] { --c-a: #b58cff; --c-b: #7a4be0; }
+.st-ico[data-c='indigo'] { --c-a: #7b8cff; --c-b: #4b52e0; }
+.st-ico[data-c='gray']   { --c-a: #a3aab8; --c-b: #6c7485; }
+.st-ico[data-c='gold']   { --c-a: #ffe08a; --c-b: #f2992e; }
+
+/* строки с иконкой */
+.settings-screen .settings-row { gap: 14px; }
+.settings-screen .settings-row .st-ico { margin-left: -2px; }
+.settings-screen .settings-card { overflow: hidden; }
+.settings-screen .settings-row .desc { font-size: 13px; }
+.st-chev { flex: 0 0 auto; width: 18px; display: grid; place-items: center; opacity: .7; }
+.settings-screen button.settings-row { transition: background var(--dur-2); border-radius: 0; }
+.settings-screen button.settings-row:hover { background: var(--surface); }
+.settings-screen button.settings-row:active { background: var(--surface-2); }
+
+/* меню: карточка без внутренних отступов, на всю ширину ряда */
+.settings-screen .settings-card.st-menu { padding: 0; }
+.st-menu .settings-row { padding: 12px 16px; min-height: 58px; }
+.st-menu .settings-row .label { font-size: 16.5px; font-weight: 600; }
+.st-menu .settings-row + .settings-row { border-top: .5px solid var(--border); }
+.st-menu .settings-row:last-child { border-bottom: 0; }
+/* разделитель начинается от текста, как в iOS */
+.st-menu .settings-row + .settings-row { margin-left: 0; }
+
+/* кнопка выхода */
+.st-logout {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  height: 52px; margin: 6px 14px 0; width: calc(100% - 28px); border-radius: 18px; font-weight: 650;
+}
+.st-logout svg { width: 20px; height: 20px; }
+
+/* ── Подстраница раздела ─────────────────────────────────────────────────── */
+.settings-inner.st-sub { padding-top: 0; }
+.st-head {
+  position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center;
+  margin: 0 -14px 6px; padding: calc(8px + var(--safe-t, 0px)) 14px 8px;
+  background: color-mix(in srgb, var(--bg-0) 82%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%);
+  box-shadow: 0 .5px 0 var(--border);
+}
+.st-head h2 { margin: 0; text-align: center; font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+.st-head .icon-btn { width: 40px; height: 40px; border-radius: 50%; color: var(--accent-soft); background: var(--surface-2); }
+.st-banner { display: grid; justify-items: center; gap: 12px; padding: 20px 24px 22px; text-align: center; }
+.st-banner p { margin: 0; max-width: 320px; font-size: 14px; line-height: 1.45; color: var(--text-dim); }
+.st-note { margin: 8px 16px 0; font-size: 12.5px; line-height: 1.4; color: var(--text-mute); }
+
+/* переопределяем «абсолютную» шапку из aurora-ios — на подстранице она обычная */
+.settings-screen .st-head { position: sticky; left: auto; right: auto; max-width: none; }
+
+/* строка выбора «Все / Общие контакты / Никто» — вертикально, на всю ширину */
+.settings-row.st-select { flex-direction: column; align-items: stretch; gap: 10px; padding: 14px 0; }
+.st-select-top { display: flex; align-items: center; gap: 14px; }
+.settings-row.st-select .segmented { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); }
+.settings-row.st-select .segmented button { padding: 9px 6px; font-size: 13px; white-space: nowrap; }
+
+/* заголовки групп */
+.st-sub .settings-group > h4 { margin: 4px 0 8px; padding: 0 18px; font-size: 13px; }
+.st-sub .settings-group { margin-bottom: 22px; }
+.settings-inner.st-sub > .settings-group { margin-left: 14px; margin-right: 14px; }
+
+@media (min-width: 981px) {
+  .st-head { margin-left: 0; margin-right: 0; border-radius: 0 0 20px 20px; }
+}

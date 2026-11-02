@@ -1,0 +1,290 @@
+/* ============================================================================
+   Aurora Glass — финальный слой оформления в стиле современных мессенджеров
+   (iMessage / Telegram / WhatsApp) с «плавающими» стеклянными панелями Apple.
+   Подключается ПОСЛЕДНИМ, после aurora-chat.css. JS и разметку не трогает.
+   ========================================================================== */
+
+/* ── 1. Палитра и стекло ─────────────────────────────────────────────────── */
+:root,
+[data-theme='dark'] {
+  --bg-0: #0b0b0e;
+  --bg-1: #141417;
+  --bg-2: #1c1c20;
+  --bg-3: #2a2a2f;
+  --surface: rgba(255, 255, 255, .04);
+  --surface-2: rgba(255, 255, 255, .08);
+  --surface-3: rgba(255, 255, 255, .14);
+  --border: rgba(255, 255, 255, .08);
+  --border-strong: rgba(255, 255, 255, .16);
+  --text: #ffffff;
+  --text-dim: #a4a4ad;
+  --text-mute: #76767f;
+  --bubble-in: #26262b;
+  --ok: #30d158;
+  --warn: #ffb340;
+  --err: #ff453a;
+  --overlay: rgba(0, 0, 0, .5);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, .38);
+  --shadow-3: 0 24px 70px rgba(0, 0, 0, .55);
+  --glass: rgba(34, 34, 38, .62);
+  --glass-strong: rgba(28, 28, 32, .88);
+  --glass-line: rgba(255, 255, 255, .1);
+  --glass-hi: inset 0 1px 0 rgba(255, 255, 255, .09);
+  --wall-veil: linear-gradient(180deg, rgba(11, 11, 14, .38), rgba(11, 11, 14, .22));
+  color-scheme: dark;
+}
+[data-theme='light'] {
+  --bg-0: #eff1f6;
+  --bg-1: #ffffff;
+  --bg-2: #ffffff;
+  --bg-3: #f2f3f8;
+  --surface: rgba(20, 24, 40, .03);
+  --surface-2: rgba(20, 24, 40, .06);
+  --surface-3: rgba(20, 24, 40, .1);
+  --border: rgba(20, 24, 40, .08);
+  --border-strong: rgba(20, 24, 40, .16);
+  --text: #0b0c12;
+  --text-dim: #5f6270;
+  --text-mute: #8d909d;
+  --bubble-in: #ffffff;
+  --ok: #28b955;
+  --warn: #f59f00;
+  --err: #f03e3e;
+  --overlay: rgba(20, 24, 40, .32);
+  --shadow-1: 0 1px 2px rgba(20, 24, 40, .08);
+  --shadow-2: 0 10px 30px rgba(20, 24, 40, .12);
+  --shadow-3: 0 24px 70px rgba(20, 24, 40, .2);
+  --glass: rgba(255, 255, 255, .7);
+  --glass-strong: rgba(255, 255, 255, .92);
+  --glass-line: rgba(255, 255, 255, .8);
+  --glass-hi: inset 0 1px 0 rgba(255, 255, 255, .95);
+  --wall-veil: linear-gradient(180deg, rgba(239, 241, 246, .72), rgba(239, 241, 246, .55));
+  color-scheme: light;
+}
+/* Фирменный синий Apple для акцента по умолчанию */
+[data-accent='ocean'] { --accent: #0a84ff; --accent-soft: #5eb0ff; --accent-2: #0a84ff; --accent-3: #5eb0ff; --accent-glow: rgba(10, 132, 255, .3); }
+[data-theme='light'][data-accent='ocean'] { --accent: #007aff; --accent-soft: #007aff; }
+/* Мягкий вертикальный градиент вместо резких «неоновых» */
+[data-accent] {
+  --grad-brand: linear-gradient(180deg, color-mix(in srgb, var(--accent) 90%, #fff), var(--accent));
+  --grad-out: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, #fff), var(--accent));
+}
+:root { --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+body { -webkit-font-smoothing: antialiased; }
+
+/* Общее «стекло» */
+.menu, .picker, .fab-menu, .toast, .composer, .pinned-bar, .scroll-down,
+.day-sep span, .conv-head, .panel-head, .mobile-nav, .reply-bar, .composer-format-tools {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root, [data-theme] { --glass: var(--bg-1); }
+}
+
+/* ── 2. Базовые элементы ─────────────────────────────────────────────────── */
+.btn, .btn-sm, .btn-lg { border-radius: 14px; font-weight: 600; box-shadow: none; }
+.btn-lg { border-radius: 16px; }
+.btn-primary { background: var(--grad-brand); box-shadow: none; }
+.btn-primary:hover { box-shadow: none; filter: brightness(1.06); }
+.badge { background: var(--grad-brand); box-shadow: none; font-weight: 650; }
+.badge.muted-badge { background: var(--surface-3); color: var(--text-dim); }
+.avatar { box-shadow: none; }
+.icon-btn { border-radius: 50%; }
+.input, .textarea, .select {
+  border: 0; border-radius: 14px; background: var(--surface-2);
+}
+.input:focus, .textarea:focus, .select:focus {
+  background: var(--bg-1); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+/* Переключатель в стиле iOS */
+.switch .track { width: 51px; height: 31px; border-radius: 999px; background: var(--surface-3); box-shadow: none; }
+.switch .track::after { width: 27px; height: 27px; top: 2px; left: 2px; background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, .3); }
+.switch input:checked + .track { background: var(--ok); }
+.switch input:checked + .track::after { transform: translateX(20px); }
+.segmented { border-radius: 12px; background: var(--surface-2); padding: 3px; }
+.segmented button { border-radius: 9px; }
+.segmented button[aria-pressed='true'] { background: var(--bg-2); color: var(--text); box-shadow: var(--shadow-1); }
+
+/* ── 3. Список чатов ─────────────────────────────────────────────────────── */
+.sb-head { padding: calc(14px + var(--safe-t)) 16px 6px; gap: 10px; }
+.sb-title h1 { font-size: 32px; font-weight: 800; letter-spacing: -.035em; }
+.sb-search .input { height: 40px; border-radius: 14px; padding-left: 40px; font-size: 16px; }
+.sb-filters { gap: 8px; padding: 4px 16px 10px; border-bottom: 0; }
+.filter-chip {
+  padding: 7px 15px; border: 0; border-radius: 999px; background: var(--surface-2);
+  color: var(--text-dim); font-size: 14px; font-weight: 600;
+}
+.filter-chip:hover { background: var(--surface-3); color: var(--text); }
+.filter-chip[aria-pressed='true'] { background: var(--accent); color: #fff; border: 0; box-shadow: none; }
+.filter-chip[aria-pressed='true']::after { display: none; }
+
+.sb-list { padding: 2px 8px 14px; }
+.chat-item {
+  gap: 13px; margin: 0; padding: 10px 12px; border: 0; border-left: 0; border-radius: 18px;
+  background: transparent;
+}
+.chat-item:hover { background: var(--surface); }
+.chat-item:active { transform: scale(.985); background: var(--surface-2); }
+.chat-item .avatar { width: 56px; height: 56px; font-size: 20px; border-radius: 50%; }
+.chat-item .name { font-size: 16.5px; font-weight: 650; letter-spacing: -.01em; }
+.chat-item .preview { font-size: 14.5px; color: var(--text-dim); }
+.chat-item .time { font-size: 12.5px; }
+.chat-item.unread .time { color: var(--accent-soft); font-weight: 650; }
+.chat-item.unread .preview { color: var(--text); font-weight: 500; }
+.chat-item .badge { min-width: 22px; height: 22px; border-radius: 11px; font-size: 12.5px; }
+.chat-item.active, .chat-item.active:hover { background: var(--accent); border: 0; }
+.chat-item.active .name, .chat-item.active .preview, .chat-item.active .preview .who,
+.chat-item.active .time, .chat-item.active .muted-ic, .chat-item.active .name .type-ic { color: #fff; }
+.chat-item.active .preview, .chat-item.active .time { opacity: .86; }
+.chat-item.active .badge, .chat-item.active .badge.muted-badge { background: #fff; color: var(--accent); }
+
+/* ── 4. Диалог: шапка, лента, пузыри ─────────────────────────────────────── */
+.conv-head { border-bottom: .5px solid var(--border); box-shadow: none; }
+.conv-head .peer { border-radius: 14px; }
+.conv-head .peer .title { font-size: 17px; font-weight: 650; letter-spacing: -.015em; }
+.conv-head .peer .sub { font-size: 13px; }
+.conv-head .peer .sub.online { color: var(--accent-soft); }
+
+.thread-inner { max-width: 780px; gap: 2px; }
+.msg-stack { max-width: min(520px, 82%); }
+.msg:not(.grouped) { margin-top: 7px; }
+
+.msg .bubble, .msg.own .bubble,
+.msg.grouped .bubble, .msg.own.grouped .bubble,
+.msg.grouped:not(:last-child) .bubble, .msg.own.grouped:not(:last-child) .bubble {
+  padding: 8px 13px 7px; font-size: 16px; line-height: 1.38; border: 0;
+  border-radius: 20px 20px 20px 6px; box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+}
+.msg.own .bubble, .msg.own.grouped .bubble, .msg.own.grouped:not(:last-child) .bubble {
+  border-radius: 20px 20px 6px 20px; background: var(--bubble-out); color: var(--bubble-out-text);
+}
+[data-theme='light'] .msg:not(.own) .bubble { box-shadow: 0 1px 2px rgba(20, 24, 40, .1); }
+.msg .bubble.has-media { padding: 4px; }
+.msg-meta { font-size: 11.5px; }
+.msg.own .bubble .bubble-text a { color: #fff; }
+.msg .sender-name { font-size: 13px; font-weight: 650; }
+
+/* Дата — плавающая стеклянная пилюля */
+.day-sep span { border: 0; padding: 4px 13px; font-size: 12.5px; font-weight: 600; color: var(--text-dim); box-shadow: var(--shadow-1), var(--glass-hi); }
+.pinned-bar { margin: 8px 12px 0; border: 0; border-radius: 16px; box-shadow: var(--shadow-1), var(--glass-hi); }
+.scroll-down {
+  width: 44px; height: 44px; border: 0; border-radius: 50%; color: var(--accent-soft);
+  box-shadow: var(--shadow-2), var(--glass-hi);
+}
+
+/* Композер — парящая стеклянная капсула */
+.composer-wrap { background: none; padding: 0 clamp(10px, 3vw, 24px) calc(14px + var(--safe-b)); }
+.composer-wrap > * { max-width: 780px; margin-left: auto; margin-right: auto; }
+.composer {
+  padding: 5px 6px; gap: 4px; border: 0; border-radius: 28px;
+  box-shadow: var(--shadow-2), var(--glass-hi), 0 0 0 .5px var(--glass-line);
+}
+.composer:focus-within { box-shadow: var(--shadow-2), var(--glass-hi), 0 0 0 1.5px color-mix(in srgb, var(--accent) 60%, transparent); }
+.composer-input { font-size: 16px; padding: 10px 4px; }
+.composer .send-btn {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--grad-brand); box-shadow: none;
+}
+.composer .send-btn svg { width: 19px; height: 19px; }
+.reply-bar { border: 0; border-radius: 18px; box-shadow: var(--shadow-1), var(--glass-hi); }
+
+/* ── 5. Меню, окна, тосты ────────────────────────────────────────────────── */
+.menu, .picker, .fab-menu {
+  border: 0; border-radius: 20px; padding: 6px;
+  background: var(--glass-strong);
+  box-shadow: var(--shadow-3), var(--glass-hi), 0 0 0 .5px var(--glass-line);
+}
+.menu-item { min-height: 42px; padding: 9px 13px; border-radius: 13px; font-size: 15.5px; }
+.menu-item:hover { background: var(--surface-2); }
+.menu-sep { margin: 5px 10px; }
+.toast { border: 0; border-radius: 999px; font-weight: 600; box-shadow: var(--shadow-2), var(--glass-hi); }
+
+.modal-backdrop { background: var(--overlay); -webkit-backdrop-filter: blur(14px) saturate(120%); backdrop-filter: blur(14px) saturate(120%); }
+.modal { border: 0; border-radius: 28px; background: var(--bg-1); box-shadow: var(--shadow-3), 0 0 0 .5px var(--glass-line); }
+.modal-header h3 { font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+.modal-footer { border-top: 0; }
+
+/* ── 6. Настройки и профиль ──────────────────────────────────────────────── */
+.settings-head h2 { font-size: 34px; font-weight: 800; letter-spacing: -.035em; }
+.settings-group > h4 { padding: 0 16px; font-size: 12.5px; letter-spacing: .04em; }
+.settings-card { border: 0; border-radius: 22px; padding: 2px 18px; background: var(--bg-2); box-shadow: var(--shadow-1); }
+.settings-row { min-height: 54px; padding: 8px 0; border-bottom: .5px solid var(--border); }
+.profile-card {
+  padding: 20px; border: 0; border-radius: 26px; box-shadow: var(--shadow-1);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, var(--bg-2)), var(--bg-2) 70%);
+}
+.theme-option { border-radius: 18px; }
+.theme-preview.light { background: linear-gradient(160deg, #ffffff, #e9ecf4); }
+.theme-preview.dark { background: linear-gradient(160deg, #0b0b0e, #26262b); }
+
+/* ── 7. Правая панель: профиль, группа, канал ────────────────────────────── */
+.panel-head { border-bottom: .5px solid var(--border); }
+.panel-hero .name { font-size: 26px; font-weight: 750; letter-spacing: -.03em; }
+.member-row { padding: 10px 10px; border-radius: 16px; }
+.member-row:hover { background: var(--surface-2); }
+.member-row .role-chip { border-radius: 999px; }
+.media-grid img, .media-grid video { border-radius: 12px; }
+
+/* ── 8. Мобильные: парящая нижняя навигация ──────────────────────────────── */
+@media (max-width: 980px) {
+  .mobile-nav {
+    left: 50%; right: auto; transform: translateX(-50%);
+    width: min(420px, calc(100% - 28px)); bottom: calc(10px + var(--safe-b));
+    padding: 6px; gap: 2px; border: 0; border-radius: 32px;
+    background: var(--glass);
+    box-shadow: var(--shadow-3), var(--glass-hi), 0 0 0 .5px var(--glass-line);
+  }
+  .mobile-nav button { border-radius: 26px; padding: 8px 4px 7px; font-weight: 600; }
+  .mobile-nav button.active { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent-soft); }
+  .sb-list { padding-bottom: calc(110px + var(--safe-b)); }
+  .settings-inner, .search-results { padding-bottom: calc(120px + var(--safe-b)); }
+  .fab {
+    right: 18px; bottom: calc(92px + var(--safe-b)); width: 58px; height: 58px; border-radius: 50%;
+    background: var(--grad-brand); box-shadow: 0 10px 28px -6px var(--accent-glow), var(--glass-hi);
+  }
+  .fab:hover { transform: scale(1.05); }
+  .toasts { bottom: calc(98px + var(--safe-b)); }
+  .conv-head { padding-left: 4px; padding-right: 4px; }
+}
+@media (max-width: 640px) {
+  .chat-item { border-radius: 16px; }
+  .sb-title h1 { font-size: 30px; }
+  .composer-wrap { padding: 0 10px calc(10px + var(--safe-b)); }
+  .modal { border-radius: 28px 28px 0 0; }
+  .menu.message-menu { border-radius: 26px; background: var(--glass-strong); }
+}
+
+/* ── 9. Десктоп: всё парит отдельными карточками ─────────────────────────── */
+@media (min-width: 981px) {
+  .app { padding: 10px; gap: 10px; box-sizing: border-box; background: var(--bg-0); }
+  .rail {
+    margin: 0; padding: 14px 0; border: 0; border-radius: 28px; background: var(--glass);
+    -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+    box-shadow: var(--shadow-2), var(--glass-hi), 0 0 0 .5px var(--glass-line);
+  }
+  .rail-btn { border-radius: 16px; }
+  .rail-btn:hover { background: var(--surface-2); }
+  .rail-btn.active { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent-soft); box-shadow: none; }
+  .sidebar, .conv, .app:not(.profile-fullscreen) .panel {
+    border: 0; border-radius: 28px; overflow: hidden;
+    box-shadow: var(--shadow-1), 0 0 0 .5px var(--border);
+  }
+  .sidebar { background: var(--bg-1); }
+  .conv-head { border-radius: 0; }
+  .settings-screen {
+    top: 10px; right: 10px; bottom: 10px; left: calc(var(--rail-w) + 20px);
+    height: auto; border-radius: 28px; box-shadow: var(--shadow-1), 0 0 0 .5px var(--border);
+  }
+}
+@media (min-width: 981px) and (max-width: 1180px) {
+  .app:not(.profile-fullscreen).with-panel .panel {
+    top: 10px; right: 10px; bottom: 10px; height: auto; box-shadow: var(--shadow-3), 0 0 0 .5px var(--border);
+  }
+}
+.app.profile-fullscreen .panel { border-radius: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-item, .filter-chip, .btn, .mobile-nav button { transition-duration: .01ms; }
+}

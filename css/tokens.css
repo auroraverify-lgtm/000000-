@@ -1,0 +1,198 @@
+/* ============================================================================
+   Aurora — дизайн-токены. Графитовая основа, спокойные поверхности и яркие акценты.
+   ========================================================================== */
+
+:root {
+  /* Скругления */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+  --r-full: 999px;
+
+  /* Типографика */
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+  --fs: 1;                     /* множитель размера текста из настроек */
+  --t-xs: calc(11.5px * var(--fs));
+  --t-sm: calc(13px * var(--fs));
+  --t-md: calc(15px * var(--fs));
+  --t-lg: calc(17px * var(--fs));
+  --t-xl: calc(22px * var(--fs));
+  --t-2xl: calc(28px * var(--fs));
+  --t-3xl: calc(36px * var(--fs));
+
+  /* Ритм */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+
+  /* Анимации */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --dur-1: .12s;
+  --dur-2: .18s;
+  --dur-3: .26s;
+  --dur-4: .38s;
+
+  /* Размеры каркаса */
+  --sidebar-w: 364px;
+  --panel-w: 380px;
+  --rail-w: 76px;
+  --header-h: 64px;
+  --composer-min: 60px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+}
+
+/* ── Акценты ─────────────────────────────────────────────────────────────── */
+:root,
+[data-accent='violet'] {
+  --accent: #7c5cff;
+  --accent-soft: #a78bfa;
+  --accent-2: #b06bff;
+  --accent-3: #35d3ff;
+  --accent-glow: rgba(124, 92, 255, .28);
+  --grad-brand: linear-gradient(135deg, #6f5bff 0%, #a855f7 100%);
+  --grad-out: linear-gradient(135deg, #596bea 0%, #8653c7 100%);
+}
+[data-accent='ocean'] {
+  --accent: #087fff;
+  --accent-soft: #3698ff;
+  --accent-2: #168bff;
+  --accent-3: #51b3ff;
+  --accent-glow: rgba(8, 127, 255, .28);
+  --grad-brand: linear-gradient(135deg, #087fff 0%, #168bff 100%);
+  --grad-out: linear-gradient(135deg, #596bea 0%, #8653c7 100%);
+}
+[data-accent='sunset'] {
+  --accent: #ff7a45;
+  --accent-soft: #ffb27a;
+  --accent-2: #ff5d8f;
+  --accent-3: #ffd166;
+  --accent-glow: rgba(255, 122, 69, .36);
+  --grad-brand: linear-gradient(135deg, #ff6a3d 0%, #ff5d8f 60%, #ffd166 100%);
+  --grad-out: linear-gradient(135deg, #ff6a3d 0%, #ff7a5c 60%, #ff9d6e 100%);
+}
+[data-accent='mint'] {
+  --accent: #16c79a;
+  --accent-soft: #6ee7c7;
+  --accent-2: #35d3b0;
+  --accent-3: #7ee8ff;
+  --accent-glow: rgba(22, 199, 154, .34);
+  --grad-brand: linear-gradient(135deg, #0fb98f 0%, #22d3a8 55%, #7ee8ff 100%);
+  --grad-out: linear-gradient(135deg, #0fb98f 0%, #1cc79f 60%, #3fd6b4 100%);
+}
+[data-accent='coral'] {
+  --accent: #ff5d73;
+  --accent-soft: #ff9aa8;
+  --accent-2: #ff4d6d;
+  --accent-3: #ffc46b;
+  --accent-glow: rgba(255, 93, 115, .34);
+  --grad-brand: linear-gradient(135deg, #ff4d6d 0%, #ff7a8d 55%, #ffc46b 100%);
+  --grad-out: linear-gradient(135deg, #ff4d6d 0%, #ff657f 60%, #ff8a9b 100%);
+}
+
+/* ── Тёмная тема (по умолчанию) ──────────────────────────────────────────── */
+:root,
+[data-theme='dark'] {
+  --bg-0: #111113;
+  --bg-1: #19191c;
+  --bg-2: #25262b;
+  --bg-3: #303136;
+  --bg-glass: rgba(25, 25, 28, .94);
+  --surface: rgba(255, 255, 255, .045);
+  --surface-2: #2b2c32;
+  --surface-3: #393a41;
+  --border: rgba(255, 255, 255, .075);
+  --border-strong: rgba(255, 255, 255, .15);
+  --text: #f4f4f6;
+  --text-dim: #b1b2ba;
+  --text-mute: #85868f;
+  --bubble-in: #2b2c32;
+  --bubble-out: var(--grad-out);
+  --bubble-out-text: #ffffff;
+  --shadow-1: 0 2px 8px rgba(0, 0, 0, .18);
+  --shadow-2: 0 12px 32px rgba(0, 0, 0, .28);
+  --shadow-3: 0 28px 70px rgba(0, 0, 0, .42);
+  --overlay: rgba(0, 0, 0, .64);
+  --ok: #35d39a;
+  --warn: #ffb648;
+  --err: #ff5d6c;
+  --wall-veil: linear-gradient(180deg, rgba(17, 17, 19, .2) 0%, rgba(17, 17, 19, .14) 40%, rgba(17, 17, 19, .28) 100%);
+  color-scheme: dark;
+}
+
+/* ── Светлая тема ────────────────────────────────────────────────────────── */
+[data-theme='light'] {
+  --bg-0: #eef0f7;
+  --bg-1: #f7f8fc;
+  --bg-2: #ffffff;
+  --bg-3: #f2f3f9;
+  --bg-glass: rgba(255, 255, 255, .78);
+  --surface: rgba(17, 20, 45, .035);
+  --surface-2: rgba(17, 20, 45, .06);
+  --surface-3: rgba(17, 20, 45, .1);
+  --border: rgba(17, 20, 45, .08);
+  --border-strong: rgba(17, 20, 45, .16);
+  --text: #12152b;
+  --text-dim: #565d7d;
+  --text-mute: #8b90a8;
+  --bubble-in: #ffffff;
+  --bubble-out: var(--grad-out);
+  --bubble-out-text: #ffffff;
+  --shadow-1: 0 2px 8px rgba(24, 28, 58, .08);
+  --shadow-2: 0 14px 34px rgba(24, 28, 58, .14);
+  --shadow-3: 0 28px 70px rgba(24, 28, 58, .2);
+  --overlay: rgba(24, 27, 48, .42);
+  --ok: #12b886;
+  --warn: #f59f00;
+  --err: #f03e3e;
+  --wall-veil: linear-gradient(180deg, rgba(247, 248, 252, .88) 0%, rgba(247, 248, 252, .74) 40%, rgba(247, 248, 252, .92) 100%);
+  color-scheme: light;
+}
+
+/* ── Обои чатов (собственная палитра, без чужих ассетов) ─────────────────── */
+[data-wallpaper='aurora'] .wallpaper-img { background-image: var(--wall-aurora); }
+[data-wallpaper='dusk'] .wallpaper-img { background-image: var(--wall-dusk); }
+[data-wallpaper='dune'] .wallpaper-img { background-image: var(--wall-dune); }
+[data-wallpaper='graphite'] .wallpaper-img { background-image: var(--wall-graphite); }
+[data-wallpaper='paper'] .wallpaper-img { background-image: var(--wall-paper); }
+
+:root {
+  --wall-aurora: url('/assets/wall-cosmos.svg');
+  --wall-dusk: radial-gradient(120% 90% at 15% 0%, #2a1f52 0%, transparent 55%),
+    radial-gradient(110% 80% at 90% 100%, #0d3d47 0%, transparent 50%),
+    linear-gradient(160deg, #0a0b14 0%, #101223 60%, #0a0d18 100%);
+  --wall-dune: radial-gradient(90% 70% at 20% 10%, #4a2f1d 0%, transparent 55%),
+    radial-gradient(90% 80% at 85% 90%, #6b3f2a 0%, transparent 45%),
+    linear-gradient(170deg, #14100d 0%, #1d1712 55%, #120e0c 100%);
+  --wall-graphite: linear-gradient(180deg, #14161d 0%, #0e1015 60%, #0a0c11 100%);
+  --wall-paper: linear-gradient(180deg, #fbfbfe 0%, #f2f3fa 100%);
+}
+[data-theme='light'] {
+  --wall-aurora: url('/assets/wall-light.jpg');
+  --wall-dusk: radial-gradient(120% 90% at 12% 0%, #e8e4ff 0%, transparent 55%),
+    radial-gradient(110% 80% at 92% 100%, #dcf6f4 0%, transparent 50%),
+    linear-gradient(160deg, #fdfdff 0%, #f4f5fc 60%, #eef2fa 100%);
+  --wall-dune: radial-gradient(90% 70% at 18% 8%, #ffe9d5 0%, transparent 55%),
+    radial-gradient(90% 80% at 88% 92%, #ffe3d1 0%, transparent 45%),
+    linear-gradient(170deg, #fffaf5 0%, #fdf3ea 55%, #fff8f2 100%);
+  --wall-graphite: linear-gradient(180deg, #f7f8fb 0%, #eef0f6 100%);
+  --wall-paper: linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%);
+}
+
+/* ── Аватары: собственные градиентные палитры ────────────────────────────── */
+[data-c='violet'] { --c1: #7c5cff; --c2: #c084fc; }
+[data-c='ocean'] { --c1: #2f7dff; --c2: #38d6ff; }
+[data-c='sunset'] { --c1: #ff7a45; --c2: #ffc46b; }
+[data-c='mint'] { --c1: #16c79a; --c2: #7ee8c8; }
+[data-c='coral'] { --c1: #ff5d73; --c2: #ff9aa8; }
+[data-c='indigo'] { --c1: #4f46e5; --c2: #8b8bff; }

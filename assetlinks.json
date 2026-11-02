@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ru.aurora.messenger",
+      "sha256_cert_fingerprints": [
+        "3D:49:9D:5E:94:07:77:DB:1F:BE:76:09:36:6C:04:34:88:6B:9E:36:31:E7:07:C0:F9:92:FD:9F:F4:59:44:B8"
+      ]
+    }
+  }
+]

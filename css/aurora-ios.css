@@ -1,0 +1,212 @@
+/* ============================================================================
+   Aurora iOS — финальный слой (подключать ПОСЛЕДНИМ, после aurora-glass.css).
+   · нижний dock опущен к краю экрана и держит 3 вкладки: Чаты · Поиск · Профиль
+   · «Профиль и настройки» — один экран: баннер, аватар, описание, затем группы настроек
+   · профиль собеседника как в Telegram: баннер, аватар на стыке, быстрые действия,
+     жалоба и блокировка — в меню «⋮»
+   · группы и каналы: тот же герой, сегменты «Медиа / Файлы / Участники»
+   · посты каналов — карточки с фото во всю ширину; фото, альбомы, видео, файлы в чатах
+   ========================================================================== */
+
+:root {
+  --dock-h: 58px;
+  /* Оставляем небольшой зазор до home indicator, не поднимая dock слишком высоко. */
+  --dock-bottom: calc(max(var(--safe-b) - 20px, 0px) + 4px);
+  --dock-space: calc(var(--dock-h) + var(--dock-bottom) + 22px);
+  --ios-card: var(--bg-2);
+  --ios-radius: 20px;
+}
+[data-theme='dark'] { --ios-card: #1c1c20; }
+[data-theme='light'] { --ios-card: #ffffff; }
+
+/* ── 1. Нижний dock ──────────────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .app .mobile-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    left: 50%; right: auto; transform: translateX(-50%);
+    width: min(360px, calc(100% - 40px));
+    height: var(--dock-h); bottom: var(--dock-bottom);
+    padding: 5px; gap: 0; border-radius: 30px;
+  }
+  .app .mobile-nav button { border-radius: 25px; gap: 2px; padding: 5px 4px; font-size: 10.5px; }
+  .app .mobile-nav button svg { width: 23px; height: 23px; }
+  .app .mobile-nav::before { top: 5px; bottom: 5px; left: 5px; width: calc((100% - 10px) / 3); border-radius: 25px; }
+  .app .mobile-nav:has(button:nth-child(2).active)::before { transform: translate3d(100%, 0, 0); }
+  .app .mobile-nav:has(button:nth-child(3).active)::before { transform: translate3d(200%, 0, 0); }
+  .app .fab { bottom: calc(var(--dock-h) + var(--dock-bottom) + 16px); }
+  .app .toasts, .toasts { bottom: calc(var(--dock-h) + var(--dock-bottom) + 14px); }
+  .sb-list, .settings-inner, .search-results, .commerce-inner, .admin-inner { padding-bottom: var(--dock-space); }
+}
+
+@media (max-width: 640px) {
+  .app { min-height: 0; }
+  .composer-wrap { padding-bottom: calc(4px + var(--safe-b)); }
+}
+
+/* ── 2. Герой профиля (общий для «Профиля», чужих профилей, групп и каналов) ─ */
+.tg-hero { position: relative; margin: 0; background: none; color: var(--text); text-align: center; }
+.tg-cover {
+  height: 168px; background-size: cover; background-position: center;
+  background-image: linear-gradient(135deg, #33206d, #167d8c);
+}
+.tg-hero.profile-theme-sunset .tg-cover { background-image: linear-gradient(135deg, #8d315d, #e58b45); }
+.tg-hero.profile-theme-ocean .tg-cover { background-image: linear-gradient(135deg, #124b78, #18a4b8); }
+.tg-hero.profile-theme-forest .tg-cover { background-image: linear-gradient(135deg, #174d3b, #6a9d49); }
+.tg-hero.profile-theme-mono .tg-cover { background-image: linear-gradient(135deg, #272936, #737887); }
+.tg-hero.profile-theme-neon .tg-cover { background-image: linear-gradient(135deg, #501b68, #087d83); }
+.tg-hero.has-banner .tg-cover {
+  background-image: linear-gradient(180deg, rgba(0, 0, 0, .28), rgba(0, 0, 0, 0) 45%), var(--banner);
+}
+.tg-id { position: relative; display: grid; justify-items: center; gap: 4px; margin-top: -54px; padding: 0 20px 14px; }
+.tg-id .avatar-wrap { border-radius: 50%; box-shadow: 0 0 0 4px var(--bg-0); }
+.tg-id .avatar-2xl { width: 108px; height: 108px; font-size: 38px; }
+.tg-id .avatar.rounded { border-radius: 32px; }
+.tg-name { margin: 8px 0 0; font-size: 26px; font-weight: 750; letter-spacing: -.03em; line-height: 1.15; overflow-wrap: anywhere; }
+.tg-name .premium-badge { margin-left: 6px; font-size: .7em; vertical-align: .1em; }
+.tg-sub { margin: 0; color: var(--text-dim); font-size: 15px; }
+.tg-sub.online { color: var(--accent-soft); }
+
+/* Панель профиля: шапка поверх баннера */
+.panel:has(.tg-hero) .panel-head {
+  position: absolute; z-index: 6; top: 0; left: 0; right: 0;
+  padding: calc(8px + var(--safe-t)) 10px 8px; background: none; border: 0;
+  -webkit-backdrop-filter: none; backdrop-filter: none; justify-content: space-between;
+}
+.panel:has(.tg-hero) .panel-head h3 { display: none; }
+.panel:has(.tg-hero) .panel-head .icon-btn {
+  color: #fff; background: rgba(0, 0, 0, .32);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.panel:has(.tg-hero) .panel-body { padding: 0 0 calc(24px + var(--safe-b)); }
+.panel:has(.tg-hero) .panel-body > :not(.tg-hero):not(.profile-bg) { margin-left: 14px; margin-right: 14px; }
+
+/* ── 3. Быстрые действия и карточки сведений ─────────────────────────────── */
+.tg-actions { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; margin: 4px 14px 14px; }
+.tg-action {
+  display: grid; justify-items: center; gap: 5px; padding: 11px 4px 9px;
+  border-radius: 16px; background: var(--ios-card); color: var(--accent-soft);
+  font-size: 12px; font-weight: 600; min-width: 0;
+  transition: transform var(--dur-2) var(--ease-spring), background var(--dur-2);
+}
+.tg-action svg { width: 23px; height: 23px; }
+.tg-action span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tg-action:active { transform: scale(.95); background: var(--surface-3); }
+.tg-action.primary, .tg-action[data-primary] { background: var(--accent); color: #fff; }
+.tg-action.danger { color: var(--err); }
+
+.tg-info { margin: 0 14px 14px; border-radius: var(--ios-radius); background: var(--ios-card); overflow: hidden; }
+.tg-info-row { display: flex; flex-direction: column-reverse; gap: 2px; padding: 11px 16px; border-bottom: .5px solid var(--border); }
+.tg-info-row:last-child { border-bottom: 0; }
+.tg-info-val { font-size: 16px; line-height: 1.4; color: var(--text); overflow-wrap: anywhere; white-space: pre-wrap; }
+.tg-info-val.accent { color: var(--accent-soft); }
+.tg-info-lbl { font-size: 12.5px; color: var(--text-mute); }
+
+.stat-row { gap: 8px; margin: 0 14px 14px; }
+.stat { border: 0; border-radius: 16px; background: var(--ios-card); }
+.settings-card.flush { padding: 0; overflow: hidden; }
+.settings-card.flush .list-item { border-radius: 0; padding: 11px 16px; }
+.settings-card.flush .list-item + .list-item { border-top: .5px solid var(--border); }
+.profile-stickers { margin: 0 14px 14px; }
+.panel:has(.tg-hero) .settings-group { margin-bottom: 14px; }
+.panel:has(.tg-hero) .settings-group > h4 { padding: 0 6px; }
+.panel:has(.tg-hero) .tabs { margin: 0 14px 12px; border-radius: 12px; padding: 3px; background: var(--surface-2); }
+.panel:has(.tg-hero) .tabs button { border-radius: 9px; padding: 7px 8px; }
+.panel:has(.tg-hero) .tabs button[aria-selected='true'] { background: var(--ios-card); box-shadow: var(--shadow-1); }
+.panel:has(.tg-hero) [data-tab-body] { padding: 0 14px; }
+.panel:has(.tg-hero) .media-grid { gap: 2px; }
+.panel:has(.tg-hero) .media-grid .media-cell { aspect-ratio: 1; overflow: hidden; border-radius: 4px; }
+.panel:has(.tg-hero) .media-grid .media-cell img, .panel:has(.tg-hero) .media-grid .media-cell video { width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+
+/* ── 4. Профиль и настройки — один экран ─────────────────────────────────── */
+.settings-screen { background: var(--bg-0); }
+.settings-inner { max-width: 640px; margin: 0 auto; padding: 0 0 var(--dock-space); }
+.settings-screen .settings-head {
+  position: absolute; z-index: 6; top: 0; left: 0; right: 0; max-width: 640px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: calc(8px + var(--safe-t)) 10px 8px;
+}
+.settings-screen .settings-head h2 { display: none; }
+.settings-screen .settings-head .icon-btn { color: #fff; background: rgba(0, 0, 0, .32); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.settings-inner > .settings-group { margin: 0 14px 18px; }
+.settings-group > h4 { margin: 0 0 6px; padding: 0 16px; text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 600; color: var(--text-mute); }
+.settings-screen .settings-card { border-radius: var(--ios-radius); background: var(--ios-card); padding: 0 16px; box-shadow: none; }
+.settings-screen .settings-row { min-height: 52px; }
+.settings-screen .settings-row:last-child { border-bottom: 0; }
+.settings-screen .settings-row .label { font-size: 16px; font-weight: 500; }
+@media (min-width: 981px) {
+  .settings-screen { overflow-y: auto; }
+  .settings-inner { padding-bottom: 40px; }
+}
+
+/* ── 5. Группы и каналы: заголовок и сегменты ────────────────────────────── */
+.tg-hero.profile-theme-aurora .tg-cover { background-image: linear-gradient(135deg, #33206d, #167d8c); }
+.panel .tg-actions .tg-action[data-primary] svg { color: #fff; }
+.member-row { padding: 9px 12px; }
+.member-row .role-chip { font-size: 11px; font-weight: 650; }
+
+/* ── 6. Посты каналов ────────────────────────────────────────────────────── */
+.conv[data-chat-type='channel'] .thread-inner { max-width: 560px; gap: 12px; }
+.conv[data-chat-type='channel'] .thread-scroll { padding-left: 10px; padding-right: 10px; }
+.conv[data-chat-type='channel'] .msg-stack { max-width: 100%; width: 100%; display: flex; flex-direction: column; }
+.conv[data-chat-type='channel'] .av-col { display: none; }
+.conv[data-chat-type='channel'] .msg .bubble,
+.conv[data-chat-type='channel'] .msg.own .bubble {
+  display: flex; flex-direction: column; padding: 0; border-radius: 22px; overflow: hidden;
+  background: var(--bubble-in); color: var(--text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .14), 0 0 0 .5px var(--border);
+}
+.conv[data-chat-type='channel'] .bubble .bubble-text { display: block; padding: 12px 16px 4px; font-size: 16px; line-height: 1.5; }
+.conv[data-chat-type='channel'] .bubble.has-media .bubble-text { padding-top: 10px; }
+.conv[data-chat-type='channel'] .bubble > .msg-meta,
+.conv[data-chat-type='channel'] .msg.own .bubble > .msg-meta { align-self: flex-end; padding: 2px 14px 9px; color: var(--text-mute); }
+.conv[data-chat-type='channel'] .att-photo,
+.conv[data-chat-type='channel'] .att-video:not(.round),
+.conv[data-chat-type='channel'] .att-album { width: 100%; max-width: none; border-radius: 0; }
+.conv[data-chat-type='channel'] .att-photo img { width: 100%; max-height: min(520px, 70dvh); object-fit: cover; }
+.conv[data-chat-type='channel'] .att-video video { max-height: min(520px, 70dvh); }
+.conv[data-chat-type='channel'] .att-album { width: 100%; }
+.conv[data-chat-type='channel'] .att-file, .conv[data-chat-type='channel'] .voice, .conv[data-chat-type='channel'] .poll { margin: 10px 12px 2px; }
+.conv[data-chat-type='channel'] .reactions { padding: 6px 4px 0; }
+.chan-views { display: inline-flex; align-items: center; gap: 4px; align-self: flex-end; padding: 4px 8px 0; font-size: 12px; color: var(--text-mute); }
+.chan-views svg { width: 14px; height: 14px; }
+
+/* ── 7. Фото, альбомы, видео, файлы — во всех чатах ──────────────────────── */
+.bubble.has-media { overflow: hidden; }
+.bubble.has-media .bubble-text { display: block; padding: 6px 10px 1px; }
+.bubble.has-media .quote, .bubble.has-media .reply-quote { margin: 4px 6px 4px; }
+.att-photo { border-radius: 17px; }
+.att-photo img { max-width: 100%; max-height: min(460px, 62dvh); min-width: 140px; }
+.att-video:not(.round) { border-radius: 17px; max-width: min(360px, 100%); }
+.att-video .play-badge .circle {
+  width: 54px; height: 54px; background: rgba(20, 20, 24, .55);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: #fff;
+}
+.att-album { display: grid; gap: 2px; width: min(340px, 100%); border-radius: 17px; }
+.att-album.n2, .att-album.n4 { grid-template-columns: 1fr 1fr; }
+.att-album.n3 { grid-template-columns: 1fr 1fr; }
+.att-album.n3 > :first-child { grid-column: 1 / -1; aspect-ratio: 2 / 1; }
+.att-album > * { aspect-ratio: 1; min-width: 0; border-radius: 0 !important; overflow: hidden; }
+.att-album img, .att-album video { width: 100%; height: 100%; max-height: none; object-fit: cover; }
+.att-file { gap: 12px; padding: 6px 8px; }
+.att-file > .ic {
+  width: 44px; height: 44px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent-soft);
+}
+.att-file .fn { font-weight: 600; font-size: 15px; }
+.att-file .fs { font-size: 12.5px; color: var(--text-dim); }
+.msg.own .att-file > .ic { background: rgba(255, 255, 255, .22); color: #fff; }
+.msg.own .att-file .fs { color: rgba(255, 255, 255, .8); }
+
+/* ── 8. Мелочи ───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .sb-title h1 { font-size: 32px; }
+  .modal { border-radius: 26px 26px 0 0; }
+  .tg-cover { height: 150px; }
+}
+@media (max-width: 380px) {
+  .tg-actions { margin-left: 10px; margin-right: 10px; gap: 6px; }
+  .tg-action { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tg-action { transition-duration: .01ms; }
+}

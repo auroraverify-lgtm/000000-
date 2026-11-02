@@ -1,0 +1,393 @@
+/* ============================================================================
+   Aurora Float — подключать САМЫМ ПОСЛЕДНИМ (после aurora-liquid.css).
+   1. Нижний dock — плавающая стеклянная «таблетка», оторванная от низа экрана
+   2. Инфо о канале / группе / профиле — отдельное окно (модалка на десктопе,
+      шторка на телефоне) с затемнённым фоном
+   3. Кнопки, ссылки, вкладки и строки в этом окне — аккуратные и понятные
+   4. Ссылки и кнопки комментариев в постах каналов
+   ========================================================================== */
+
+/* ── 1. Плавающий dock ───────────────────────────────────────────────────── */
+.toasts { display: none !important; }
+
+@media (max-width: 980px) {
+  :root {
+    --dock-h: 66px;
+    --dock-bottom: calc(var(--safe-b, 0px) + 12px);
+    --dock-space: calc(var(--dock-h) + var(--dock-bottom) + 26px);
+  }
+  .app .mobile-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    left: 50%; right: auto; transform: translateX(-50%);
+    width: min(380px, calc(100% - 32px));
+    height: var(--dock-h); bottom: var(--dock-bottom);
+    padding: 6px; gap: 0; border-radius: 36px;
+    border: .5px solid color-mix(in srgb, #fff 22%, var(--border-strong));
+    background: var(--lg-fill-strong, var(--bg-glass));
+    -webkit-backdrop-filter: blur(30px) saturate(210%); backdrop-filter: blur(30px) saturate(210%);
+    box-shadow:
+      0 18px 40px -14px rgba(0, 0, 0, .6),
+      0 4px 12px -4px rgba(0, 0, 0, .3),
+      inset 0 1px 0 rgba(255, 255, 255, .28);
+  }
+  [data-theme='light'] .app .mobile-nav {
+    box-shadow: 0 16px 36px -14px rgba(30, 40, 80, .32), 0 3px 10px -4px rgba(30, 40, 80, .14), inset 0 1px 0 rgba(255, 255, 255, .9);
+  }
+  .app .mobile-nav::before {
+    top: 6px; bottom: 6px; left: 6px; width: calc((100% - 12px) / 3); border-radius: 30px;
+  }
+  .app .mobile-nav:has(button:nth-child(2).active)::before { transform: translate3d(100%, 0, 0); }
+  .app .mobile-nav:has(button:nth-child(3).active)::before { transform: translate3d(200%, 0, 0); }
+  .app .mobile-nav button { border-radius: 30px; padding: 5px 4px 4px; }
+
+  .app .fab { bottom: calc(var(--dock-h) + var(--dock-bottom) + 16px); }
+  .app .toasts, .toasts { bottom: calc(var(--dock-h) + var(--dock-bottom) + 14px); }
+  .selection-bar { bottom: calc(var(--dock-h) + var(--dock-bottom) + 8px); }
+  .sb-list, .settings-inner, .search-results, .commerce-inner, .admin-inner, .pm { padding-bottom: var(--dock-space); }
+}
+
+/* ── 2. Инфо канала / группы / профиля — отдельное окно ──────────────────── */
+html:root .app.with-panel,
+html:root .app.profile-fullscreen { padding-right: 0; }
+
+/* затемнение фона за окном */
+.app.with-panel::after,
+.app.profile-fullscreen::after {
+  content: ''; position: fixed; inset: 0; z-index: 124;
+  background: var(--overlay);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  animation: fade-in var(--dur-3) var(--ease-out);
+}
+
+html:root .app.with-panel .panel,
+html:root .app.profile-fullscreen .panel {
+  position: fixed; z-index: 125; inset: 0; margin: auto;
+  width: min(480px, calc(100vw - 32px));
+  height: min(86dvh, 840px);
+  max-width: none; border: 0; border-radius: 30px; overflow: hidden;
+  background: var(--bg-0);
+  box-shadow: 0 40px 90px -20px rgba(0, 0, 0, .65), 0 0 0 .5px var(--border-strong);
+  animation: float-win-in var(--dur-4) var(--ease-out);
+}
+@keyframes float-win-in { from { opacity: 0; transform: translateY(18px) scale(.965); } to { opacity: 1; transform: none; } }
+
+html:root .app.profile-fullscreen .panel-body {
+  width: 100%; padding-left: 0; padding-right: 0;
+}
+.panel .panel-body { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+
+/* десктоп: освобождаем 4-ю колонку сетки, окно её больше не занимает */
+@media (min-width: 981px) {
+  html:root .app.with-panel { grid-template-columns: var(--rail-w) var(--sidebar-w) minmax(0, 1fr); }
+  .tg-cover { height: 190px; }
+}
+
+/* телефон и планшет: шторка снизу */
+@media (max-width: 980px) {
+  html:root .app.with-panel .panel,
+  html:root .app.profile-fullscreen .panel {
+    inset: auto 0 0 0; margin: 0; width: 100%;
+    height: calc(100dvh - var(--safe-t, 0px) - 14px);
+    border-radius: 30px 30px 0 0;
+    animation: float-sheet-in var(--dur-4) var(--ease-out);
+  }
+  /* «ручка» шторки */
+  .panel::before {
+    content: ''; position: absolute; z-index: 8; top: 6px; left: 50%; transform: translateX(-50%);
+    width: 38px; height: 5px; border-radius: 5px; background: rgba(255, 255, 255, .55); pointer-events: none;
+  }
+}
+@keyframes float-sheet-in { from { transform: translateY(100%); } to { transform: none; } }
+
+/* ── 3. Кнопки, ссылки, вкладки и строки внутри окна ─────────────────────── */
+/* быстрые действия — крупные плитки с иконкой в цветном кружке */
+.panel .tg-actions { gap: 10px; margin: 6px 14px 16px; }
+.panel .tg-action {
+  position: relative; gap: 7px; padding: 12px 4px 11px; border-radius: 20px;
+  background: var(--ios-card, var(--bg-2));
+  box-shadow: 0 0 0 .5px var(--border), 0 6px 16px -10px rgba(0, 0, 0, .45);
+  color: var(--text); font-size: 12px; font-weight: 650;
+}
+.panel .tg-action svg {
+  width: 40px; height: 40px; padding: 10px; border-radius: 14px; box-sizing: border-box;
+  background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent-soft);
+  transition: transform var(--dur-2) var(--ease-spring);
+}
+.panel .tg-action:hover svg { transform: translateY(-2px) scale(1.05); }
+.panel .tg-action.primary,
+.panel .tg-action[data-primary] {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, #fff), var(--accent));
+  color: #fff; box-shadow: 0 12px 24px -10px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+.panel .tg-action.primary svg,
+.panel .tg-action[data-primary] svg { background: rgba(255, 255, 255, .22); color: #fff; }
+.panel .tg-action.danger svg { background: color-mix(in srgb, var(--err) 16%, transparent); color: var(--err); }
+.panel .tg-action.danger { color: var(--err); }
+
+/* карточка сведений (описание, ссылка, @имя, дата) */
+.panel .tg-info { border-radius: 22px; box-shadow: 0 0 0 .5px var(--border); }
+.panel .tg-info-row { position: relative; padding: 13px 18px; transition: background var(--dur-2); }
+.panel .tg-info-val { font-size: 15.5px; }
+.panel .tg-info-lbl { font-size: 12px; font-weight: 550; letter-spacing: .01em; }
+
+/* строки-ссылки: акцентный цвет, шеврон справа, подсветка при наведении */
+.panel .tg-info-row:has(a),
+.panel .tg-info-row:has(.tg-info-val.accent),
+.panel .tg-info-row[role='button'],
+button.tg-info-row { cursor: pointer; padding-right: 40px; text-align: left; width: 100%; }
+.panel .tg-info-row:has(a)::after,
+.panel .tg-info-row:has(.tg-info-val.accent)::after,
+.panel .tg-info-row[role='button']::after,
+button.tg-info-row::after {
+  content: '›'; position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  font-size: 22px; line-height: 1; color: var(--text-mute);
+}
+.panel .tg-info-row:has(a):hover,
+.panel .tg-info-row:has(.tg-info-val.accent):hover,
+.panel .tg-info-row[role='button']:hover,
+button.tg-info-row:hover { background: var(--surface-2); }
+.panel .tg-info-row:has(a):active,
+.panel .tg-info-row:has(.tg-info-val.accent):active { background: var(--surface-3); }
+.panel .tg-info-val.accent { font-weight: 600; }
+
+/* обычные ссылки в окне */
+.panel a { color: var(--accent-soft); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+.panel a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+
+/* вкладки «Медиа / Файлы / Участники» — сегменты-таблетки */
+.panel .tabs {
+  margin: 4px 14px 14px; padding: 4px; gap: 4px; border-radius: 16px;
+  background: var(--surface-2); box-shadow: inset 0 0 0 .5px var(--border);
+}
+.panel .tabs button { border-radius: 12px; padding: 9px 8px; font-weight: 650; color: var(--text-dim); }
+.panel .tabs button:hover { color: var(--text); }
+.panel .tabs button[aria-selected='true'] {
+  background: var(--ios-card, var(--bg-2)); color: var(--text);
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, .35), 0 0 0 .5px var(--border);
+}
+
+/* участники */
+.panel .member-row { border-radius: 16px; padding: 10px 12px; transition: background var(--dur-2); }
+.panel .member-row:hover { background: var(--surface-2); }
+.panel .member-row .role-chip {
+  padding: 3px 9px; border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent-soft);
+}
+
+/* кнопки закрытия/меню поверх баннера — стекло, крупнее */
+.panel:has(.tg-hero) .panel-head .icon-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(0, 0, 0, .36); box-shadow: inset 0 0 0 .5px rgba(255, 255, 255, .22);
+}
+.panel:has(.tg-hero) .panel-head .icon-btn:hover { background: rgba(0, 0, 0, .5); }
+
+/* ── 4. Посты каналов: ссылки и «Комментарии» ────────────────────────────── */
+.conv[data-chat-type='channel'] .bubble-text a,
+.conv[data-chat-type='group'] .bubble-text a {
+  color: var(--accent-soft); font-weight: 600; text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent-soft) 45%, transparent);
+  text-underline-offset: 3px; text-decoration-thickness: 1.5px; overflow-wrap: anywhere;
+}
+.conv[data-chat-type='channel'] .bubble-text a:hover,
+.conv[data-chat-type='group'] .bubble-text a:hover { text-decoration-color: currentColor; }
+
+.conv[data-chat-type='channel'] .post-foot {
+  margin: 8px 10px 10px; padding: 0; border: 0; border-radius: 16px; overflow: hidden;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  box-shadow: inset 0 0 0 .5px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.conv[data-chat-type='channel'] .post-comments { min-height: 46px; border-radius: 16px; font-weight: 650; }
+.conv[data-chat-type='channel'] .post-comments:hover { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.conv[data-chat-type='channel'] .post-comments .cnt {
+  padding: 2px 9px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 12.5px; font-weight: 650;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app.with-panel::after, .app.profile-fullscreen::after, .panel { animation-duration: .01ms !important; }
+  .panel .tg-action svg { transition-duration: .01ms; }
+}
+
+/* ── 5. Исправления: сетка действий без прокрутки, аватар ────────────────── */
+/* кнопки (Изменить, Добавить, Пригласить, Заявки, Жалоба, Статистика, Ссылки…) —
+   сетка в несколько рядов, подписи переносятся, горизонтальной прокрутки нет */
+.panel .tg-actions {
+  display: grid; grid-auto-flow: row; grid-auto-columns: auto;
+  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+  gap: 8px; margin: 6px 14px 16px; overflow: visible;
+}
+.panel .tg-action { min-width: 0; padding: 11px 4px 10px; gap: 6px; }
+.panel .tg-action span {
+  max-width: 100%; overflow: hidden; white-space: normal; text-overflow: clip;
+  text-align: center; font-size: 11.5px; line-height: 1.2; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.panel .tg-action svg { width: 38px; height: 38px; padding: 9px; }
+
+/* главная кнопка («Изменить») — во всю ширину, иконка слева */
+.panel .tg-action.primary,
+.panel .tg-action[data-primary] {
+  grid-column: 1 / -1; display: flex; flex-direction: row; align-items: center; justify-content: center;
+  gap: 10px; padding: 11px 16px; border-radius: 18px;
+}
+.panel .tg-action.primary svg,
+.panel .tg-action[data-primary] svg { width: 30px; height: 30px; padding: 6px; border-radius: 10px; }
+.panel .tg-action.primary span,
+.panel .tg-action[data-primary] span { font-size: 15px; font-weight: 700; display: block; }
+
+/* никакой горизонтальной прокрутки в окне */
+.panel .panel-body, .panel:has(.tg-hero) .panel-body { overflow-x: hidden; }
+
+/* аватар: рамка повторяет форму логотипа (скруглённый квадрат), без «двойного кольца» */
+.panel .tg-id .avatar-wrap:has(.avatar.rounded),
+.panel .tg-id .avatar-wrap:has(.avatar-2xl.rounded) { border-radius: 36px; }
+.panel .tg-id .avatar-wrap {
+  box-shadow: 0 0 0 4px var(--bg-0), 0 14px 28px -12px rgba(0, 0, 0, .5);
+}
+.panel .tg-id .avatar.rounded { border-radius: 32px; }
+
+/* ── 6. Полноэкранное окно канала / группы / профиля ─────────────────────── */
+/* открывается как отдельный экран на весь размер, поверх всего приложения */
+.app.with-panel::after, .app.profile-fullscreen::after { display: none; }
+.panel::before { display: none !important; }
+
+html:root .app.with-panel .panel,
+html:root .app.profile-fullscreen .panel {
+  position: fixed; inset: 0; margin: 0; z-index: 125;
+  width: 100%; height: 100dvh; max-width: none; border-radius: 0; border: 0;
+  background:
+    radial-gradient(70% 38% at 50% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+    var(--bg-0);
+  box-shadow: none;
+  animation: float-full-in var(--dur-4) var(--ease-out);
+}
+@keyframes float-full-in { from { opacity: 0; transform: translateY(22px) scale(.985); } to { opacity: 1; transform: none; } }
+
+/* содержимое — по центру удобной колонкой, баннер остаётся на всю ширину */
+html:root .panel:has(.tg-hero) .panel-body { padding: 0 0 calc(40px + var(--safe-b, 0px)); }
+html:root .panel:has(.tg-hero) .panel-body > :not(.tg-hero):not(.profile-bg) {
+  width: min(720px, calc(100% - 28px)); margin-left: auto; margin-right: auto;
+}
+html:root .panel:has(.tg-hero) [data-tab-body] { padding: 0; }
+
+/* баннер и герой крупнее */
+.panel .tg-cover { height: clamp(190px, 30dvh, 300px); }
+.panel .tg-hero.has-banner .tg-cover::after,
+.panel .tg-hero:not(.has-banner) .tg-cover::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0, 0, 0, .28) 0%, transparent 35%, transparent 62%, var(--bg-0) 100%);
+}
+.panel .tg-id { margin-top: -70px; gap: 6px; padding-bottom: 18px; }
+.panel .tg-id .avatar-2xl { width: 128px; height: 128px; font-size: 44px; }
+.panel .tg-name { font-size: clamp(26px, 4.2vw, 34px); }
+.panel .tg-sub { font-size: 15.5px; }
+
+/* карточки и кнопки в широком окне */
+.panel .tg-actions { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; margin-bottom: 18px; }
+.panel .tg-action { padding: 14px 6px 12px; }
+.panel .tg-action span { font-size: 12.5px; }
+.panel .tg-action svg { width: 42px; height: 42px; padding: 10px; }
+.panel .tg-info { margin-bottom: 18px; }
+.panel .tg-info-row { padding: 15px 20px; }
+.panel .tg-info-val { font-size: 16.5px; }
+.panel .tabs { margin-bottom: 16px; }
+.panel .tabs button { padding: 11px 8px; font-size: 14.5px; }
+.panel .media-grid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 3px; }
+.panel .member-row { padding: 12px 14px; }
+
+/* кнопки закрытия/меню чуть крупнее; на широком экране — вровень с колонкой */
+.panel:has(.tg-hero) .panel-head .icon-btn { width: 44px; height: 44px; }
+@media (min-width: 981px) {
+  .panel:has(.tg-hero) .panel-head { padding: 18px 24px; }
+  .panel .tg-id .avatar-wrap { box-shadow: 0 0 0 5px var(--bg-0), 0 22px 44px -16px rgba(0, 0, 0, .55); }
+}
+@media (max-width: 640px) {
+  .panel .tg-cover { height: 190px; }
+  .panel .tg-id .avatar-2xl { width: 112px; height: 112px; }
+  .panel .tg-actions { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+}
+
+/* ── 8. Сгруппированные действия для управления группами и каналами ─────── */
+.tg-actions[data-mg] { display: none !important; }
+
+.modal-root { z-index: 160; }
+
+.mg-open {
+  display: flex; align-items: center; gap: 14px; width: min(720px, calc(100% - 28px)); margin: 6px auto 18px;
+  padding: 14px 16px; border-radius: 22px; text-align: left; color: #fff;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 90%, #fff), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, #000));
+  box-shadow: 0 18px 34px -16px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, .38);
+  transition: transform var(--dur-2) var(--ease-spring);
+}
+.mg-open:active { transform: scale(.98); }
+.mg-open-ico {
+  flex: 0 0 auto; width: 46px; height: 46px; display: grid; place-items: center;
+  border-radius: 15px; background: rgba(255, 255, 255, .22);
+}
+.mg-open-ico svg { width: 24px; height: 24px; }
+.mg-open-txt { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.mg-open-txt b { font-size: 16.5px; font-weight: 750; }
+.mg-open-txt small { font-size: 12.5px; opacity: .85; line-height: 1.3; }
+.mg-chev { flex: 0 0 auto; width: 20px; height: 20px; display: grid; place-items: center; opacity: .7; }
+.mg-chev svg { width: 18px; height: 18px; }
+
+.mg-root {
+  position: fixed; inset: 0; z-index: 130; display: flex; flex-direction: column;
+  background:
+    radial-gradient(70% 34% at 50% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+    var(--bg-0);
+  animation: mg-in var(--dur-4) var(--ease-out);
+}
+.mg-root.closing { animation: mg-out .2s var(--ease-in-out) forwards; }
+@keyframes mg-in { from { opacity: 0; transform: translateX(32px); } to { opacity: 1; transform: none; } }
+@keyframes mg-out { to { opacity: 0; transform: translateX(32px); } }
+.mg-sheet { flex: 1; min-height: 0; display: flex; flex-direction: column; width: 100%; }
+.mg-head {
+  flex: 0 0 auto; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center;
+  padding: calc(8px + var(--safe-t, 0px)) 12px 8px;
+  background: color-mix(in srgb, var(--bg-0) 82%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%);
+  box-shadow: 0 .5px 0 var(--border);
+}
+.mg-head h2 { margin: 0; text-align: center; font-size: 17px; font-weight: 700; }
+.mg-back { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--surface-2); color: var(--accent-soft); }
+.mg-back svg { width: 20px; height: 20px; }
+.mg-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 18px 14px calc(36px + var(--safe-b, 0px)); }
+.mg-scroll > * { width: min(640px, 100%); margin-left: auto; margin-right: auto; }
+.mg-id { display: grid; justify-items: center; gap: 4px; padding: 6px 0 22px; text-align: center; }
+.mg-id .avatar-wrap { width: 84px; height: 84px; border-radius: 28px; box-shadow: 0 14px 28px -12px rgba(0, 0, 0, .5); }
+.mg-id .avatar-wrap .avatar, .mg-id .avatar-wrap .avatar-2xl { width: 84px; height: 84px; font-size: 30px; }
+.mg-id b { margin-top: 8px; font-size: 22px; font-weight: 750; letter-spacing: -.02em; }
+.mg-id small { font-size: 14px; color: var(--text-dim); }
+.mg-group { margin: 0 auto 20px; }
+.mg-group h4 { margin: 0 0 8px; padding: 0 14px; color: var(--text-mute); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.mg-card { overflow: hidden; border-radius: 20px; background: var(--ios-card, var(--bg-1)); box-shadow: 0 0 0 .5px var(--border); }
+.mg-row {
+  display: flex; align-items: center; gap: 13px; width: 100%; min-height: 64px; padding: 10px 14px;
+  text-align: left; color: var(--text); background: transparent; transition: background var(--dur-2);
+}
+.mg-row + .mg-row { border-top: .5px solid var(--border); }
+.mg-row:hover { background: var(--surface-2); }
+.mg-row:active { background: var(--surface-3); }
+.mg-row.danger { color: var(--err); }
+.mg-ico {
+  flex: 0 0 auto; width: 36px; height: 36px; display: grid; place-items: center;
+  border-radius: 12px; color: #fff; background: linear-gradient(160deg, var(--mg-a, #a3aab8), var(--mg-b, #6c7485));
+}
+.mg-ico svg { width: 19px; height: 19px; }
+.mg-ico[data-c='blue'] { --mg-a: #4aa3ff; --mg-b: #1f6fe5; }
+.mg-ico[data-c='cyan'] { --mg-a: #46d3f2; --mg-b: #1397c9; }
+.mg-ico[data-c='teal'] { --mg-a: #3fd6b5; --mg-b: #0f9f86; }
+.mg-ico[data-c='green'] { --mg-a: #5fd97a; --mg-b: #23a24a; }
+.mg-ico[data-c='amber'] { --mg-a: #ffd25a; --mg-b: #f0a30f; }
+.mg-ico[data-c='orange'] { --mg-a: #ffa24d; --mg-b: #f06a18; }
+.mg-ico[data-c='red'] { --mg-a: #ff7a7a; --mg-b: #e53b4b; }
+.mg-ico[data-c='purple'] { --mg-a: #b58cff; --mg-b: #7a4be0; }
+.mg-ico[data-c='indigo'] { --mg-a: #7b8cff; --mg-b: #4b52e0; }
+.mg-txt { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.mg-label { font-size: 15px; font-weight: 650; }
+.mg-hint { color: var(--text-dim); font-size: 12px; line-height: 1.35; }
+.mg-root button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) {
+  .mg-root, .mg-root.closing { animation-duration: .01ms !important; }
+  .mg-open, .mg-row { transition-duration: .01ms; }
+}

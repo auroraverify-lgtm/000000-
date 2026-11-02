@@ -1,0 +1,107 @@
+/* ============================================================================
+   Aurora Emoji — премиум-эмодзи и наборы. Подключать ПОСЛЕДНИМ (после aurora-liquid.css):
+   <link rel="stylesheet" href="/css/aurora-emoji.css?v=20261030-emoji-inline-2">
+   ========================================================================== */
+
+/* ── Эмодзи в тексте ─────────────────────────────────────────────────────── */
+.premium-emoji.ce { width: 1.55em; height: 1.55em; margin: 0 .04em; vertical-align: -.3em; filter: none; user-select: none; -webkit-user-drag: none; }
+.ce-jumbo { display: flex; gap: 6px; flex-wrap: wrap; line-height: 1; }
+.ce-jumbo .premium-emoji.ce { width: 92px; height: 92px; margin: 0; vertical-align: baseline; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .25)); animation: ce-pop .42s var(--ease-spring, cubic-bezier(.34, 1.56, .64, 1)); }
+@keyframes ce-pop { from { transform: scale(.6); opacity: 0 } to { transform: none; opacity: 1 } }
+/* сообщение из одних эмодзи — без пузыря, как стикер */
+.bubble.ce-only { background: none !important; box-shadow: none !important; padding: 2px 4px; }
+.bubble.ce-only .msg-meta { opacity: .75; }
+
+/* ── Эмодзи рядом с именем ───────────────────────────────────────────────── */
+.pbadge.pemoji { width: 22px; height: 22px; filter: none; vertical-align: -5px; }
+.pbadge.pemoji::after { display: none; }
+.pbadge.pemoji .premium-emoji { width: 100%; height: 100%; vertical-align: baseline; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .28)); }
+.pbadge.pemoji.lg, .tg-name .pbadge.pemoji { width: 30px; height: 30px; vertical-align: -6px; }
+.conv-head .pbadge.pemoji, .chat-item .pbadge.pemoji { width: 19px; height: 19px; vertical-align: -4px; }
+
+/* ── Вкладка в пикере ────────────────────────────────────────────────────── */
+.picker { width: min(404px, calc(100vw - 24px)); max-height: min(440px, 62dvh); }
+.pk-tab { display: grid; place-items: center; }
+.pk-tab-ic { width: 22px; height: 22px; display: block; }
+.pk { display: grid; gap: 4px; align-content: start; }
+.pk.hidden { display: none; }
+
+.pk-search { position: sticky; top: -10px; z-index: 2; display: flex; align-items: center; gap: 8px; margin: -2px 0 6px; padding: 0 14px; height: 40px; border-radius: 999px; color: var(--text-mute);
+  background: var(--lg-fill, var(--surface-2)); box-shadow: var(--lg-rim, inset 0 0 0 .5px var(--border)); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.pk-search svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.pk-search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; color: var(--text); font: inherit; font-size: 16px; }
+.pk-search:focus-within { box-shadow: var(--lg-rim, none), 0 0 0 1.5px color-mix(in srgb, var(--accent) 60%, transparent); color: var(--accent-soft); }
+.pk-title { margin: 12px 4px 6px; font-size: 12.5px; font-weight: 650; color: var(--text-mute); letter-spacing: .01em; }
+
+.pk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 4px; }
+.pk-tile { position: relative; aspect-ratio: 1; display: grid; place-items: center; border-radius: 16px; background: var(--surface); transition: transform var(--dur-2, .2s) var(--ease-spring, ease), background var(--dur-2, .2s); }
+.pk-tile .premium-emoji { width: 48px; height: 48px; vertical-align: baseline; }
+.pk-tile:hover { background: var(--surface-2); transform: translateY(-2px) scale(1.06); }
+.pk-tile:active { transform: scale(.92); }
+.pk-tile.on { background: color-mix(in srgb, var(--accent) 24%, transparent); box-shadow: 0 0 0 2px var(--accent); }
+.pk-tile.locked { opacity: .55; filter: saturate(.6); }
+.pk-tile.locked::after { content: '🔒'; position: absolute; right: 3px; bottom: 2px; font-size: 11px; }
+
+.pk-mine { margin-bottom: 8px; }
+.pk-mine-name { margin: 0 4px 4px; font-size: 13.5px; font-weight: 650; }
+
+.pk-pack { margin-bottom: 8px; border-radius: 20px; background: var(--surface); overflow: hidden; box-shadow: inset 0 0 0 .5px var(--border); }
+.pk-pack.open { background: var(--surface-2); }
+.pk-pack-head { display: flex; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; }
+.pk-pack-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 20px; }
+.pk-cover { display: flex; flex: 0 0 auto; }
+.pk-cover img { width: 36px; height: 36px; margin-left: -12px; padding: 3px; border-radius: 50%; background: var(--bg-1); box-shadow: 0 0 0 2px var(--bg-1); }
+.pk-cover img:first-child { margin-left: 0; }
+.pk-meta { display: grid; min-width: 0; flex: 1; line-height: 1.25; }
+.pk-meta b { font-size: 15.5px; font-weight: 650; }
+.pk-meta small { font-size: 12.5px; color: var(--text-mute); }
+.pk-add { flex: 0 0 auto; height: 32px; padding: 0 14px; border-radius: 999px; font-size: 13.5px; font-weight: 650; color: #fff;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, #fff), var(--accent)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45); }
+.pk-add:active { transform: scale(.94); }
+.pk-add.added { color: var(--accent-soft); background: var(--surface-3); box-shadow: none; }
+.pk-pack .pk-grid { padding: 2px 10px 12px; }
+
+.pk-empty { display: grid; gap: 4px; justify-items: center; padding: 30px 0; text-align: center; color: var(--text-dim); font-weight: 600; }
+.pk-empty small { color: var(--text-mute); font-weight: 400; }
+.pk-banner { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0 8px; padding: 10px 12px; border-radius: 16px; font-size: 13.5px; font-weight: 600;
+  background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.pk-banner-act { display: flex; gap: 6px; }
+.pk-banner-act button { height: 30px; padding: 0 12px; border-radius: 999px; font-size: 13px; font-weight: 650; background: var(--surface-3); color: var(--text); }
+.pk-banner-act button:last-child { background: var(--accent); color: #fff; }
+.pk-name-btn { width: 100%; margin-top: 6px; height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 16px; font-weight: 650; color: var(--gold, #ffd479);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gold, #ffd479) 16%, transparent), color-mix(in srgb, #c084fc 16%, transparent)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold, #ffd479) 30%, transparent); }
+
+.pk-lock { display: grid; gap: 4px; justify-items: start; margin: 0 0 8px; padding: 12px 14px; border-radius: 18px; font-size: 13px; color: var(--text-dim);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gold, #ffd479) 16%, transparent), color-mix(in srgb, #c084fc 16%, transparent)); }
+.pk-lock b { color: var(--gold, #ffd479); font-size: 14.5px; }
+.pk-lock button { margin-top: 6px; height: 32px; padding: 0 16px; border-radius: 999px; font-weight: 700; color: #14102a; background: linear-gradient(135deg, #ffe9a8, #ffb347); }
+
+/* Keep the textarea's native selection/caret while drawing custom emoji over their shortcodes. */
+.composer-input-wrap { position: relative; flex: 1 1 auto; min-width: 0; min-height: 40px; }
+.composer-input-wrap > .composer-input { position: relative; z-index: 1; display: block; width: 100%; min-width: 0; }
+.pk-input-overlay { position: absolute; z-index: 0; inset: 0; overflow: hidden; color: var(--text); white-space: pre-wrap; overflow-wrap: break-word; word-break: normal; pointer-events: none; }
+.composer-input.has-custom-emoji { color: transparent !important; -webkit-text-fill-color: transparent; caret-color: var(--accent-soft); }
+.composer-input.has-custom-emoji::placeholder { color: transparent !important; -webkit-text-fill-color: transparent; }
+.pk-input-token { position: relative; color: transparent; }
+.pk-input-token img { position: absolute; left: 50%; top: 50%; width: 1.55em; height: 1.55em; object-fit: contain; transform: translate(-50%, -50%); }
+
+/* Reactions stay still; only their color and background respond to interaction. */
+.reaction, .reaction:hover, .reaction:active, .reaction.burst,
+.reaction.prem .emo, .reaction.prem.burst {
+  animation: none !important;
+  transform: none !important;
+}
+.reaction { transition-property: color, background-color, border-color, box-shadow !important; }
+.reaction .premium-emoji { width: 28px; height: 28px; }
+
+/* ── Карточка на экране Premium ──────────────────────────────────────────── */
+.pk-name-sec .pm-card { display: grid; gap: 10px; }
+.pk-name-sec .pm-preview { margin-bottom: 4px; }
+.pk-clear { width: 100%; }
+
+@media (max-width: 640px) {
+  .picker { max-height: min(52dvh, 440px); }
+  .pk-tile .premium-emoji { width: 44px; height: 44px; }
+  .ce-jumbo .premium-emoji.ce { width: 80px; height: 80px; }
+}
+@media (prefers-reduced-motion: reduce) { .ce-jumbo .premium-emoji.ce { animation: none; } }
